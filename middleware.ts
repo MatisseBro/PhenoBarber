@@ -9,9 +9,14 @@ type NetlifyEnvironment = {
   }
 }
 
+declare const Netlify: NetlifyEnvironment | undefined
+
 function runtimeEnvironmentValue(name: string): string | undefined {
-  const netlify = (globalThis as typeof globalThis & { Netlify?: NetlifyEnvironment }).Netlify
-  return netlify?.env?.get(name) ?? process.env[name]
+  if (typeof Netlify !== 'undefined') {
+    const value = Netlify.env?.get(name)
+    if (value !== undefined) return value
+  }
+  return process.env[name]
 }
 
 function decodeBase64Url(value: string): ArrayBuffer {
