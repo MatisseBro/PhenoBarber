@@ -3,6 +3,17 @@ import { NextResponse, type NextRequest } from 'next/server'
 const COOKIE_NAME = 'pheno_admin_session'
 const SESSION_MAX_AGE = 60 * 60 * 8
 
+type NetlifyEnvironment = {
+  env?: {
+    get(name: string): string | undefined
+  }
+}
+
+function runtimeEnvironmentValue(name: string): string | undefined {
+  const netlify = (globalThis as typeof globalThis & { Netlify?: NetlifyEnvironment }).Netlify
+  return netlify?.env?.get(name) ?? process.env[name]
+}
+
 function decodeBase64Url(value: string): ArrayBuffer {
   const normalized = value.replace(/-/g, '+').replace(/_/g, '/')
   const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=')
@@ -24,9 +35,9 @@ async function verifySessionSignature(payload: string, signature: string, secret
 
 async function isAuthenticated(req: NextRequest): Promise<boolean> {
   const token = req.cookies.get(COOKIE_NAME)?.value
-  const secret = process.env.ADMIN_SECRET
-  const password = process.env.ADMIN_PASSWORD
-  const version = process.env.ADMIN_SESSION_VERSION
+  const secret = runtimeEnvironmentValue('ADMIN_SECRET')
+  const password = runtimeEnvironmentValue('ADMIN_PASSWORD')
+  const version = runtimeEnvironmentValue('ADMIN_SESSION_VERSION')
   if (!token || !secret || secret.length < 32 || !password || password.length < 12 || !version) return false
   try {
     const [encodedPayload, signature, extra] = token.split('.')
