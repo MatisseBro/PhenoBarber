@@ -28,6 +28,75 @@
   overflow-x: hidden;
 }
 
+/* La navigation principale est commune à toutes les pages. */
+.rdv-prog { position: sticky; top: 68px; }
+.rdv-top { position: sticky; top: 70px; }
+.rdv-sh { margin-top: 0; }
+
+.rdv-hair-group { margin-top: 1.5rem; }
+.rdv-hair-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .55rem;
+}
+.rdv-hair-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.rdv-hair-grid-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.rdv-hair-choice {
+  min-height: 48px;
+  padding: .7rem .65rem;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 9px;
+  background: rgba(255,255,255,.035);
+  color: rgba(240,235,225,.78);
+  font-family: var(--rdv-sans);
+  font-size: .78rem;
+  cursor: pointer;
+  transition: border-color .16s, background .16s, color .16s, transform .16s;
+}
+.rdv-hair-choice:hover { border-color: rgba(201,168,76,.55); color: #fff; transform: translateY(-1px); }
+.rdv-hair-choice.sel { border-color: var(--rdv-yellow); background: rgba(201,168,76,.13); color: var(--rdv-yellow); }
+.rdv-hair-multi { display: flex; align-items: center; gap: .5rem; text-align: left; }
+.rdv-hair-check {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 19px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.24);
+  border-radius: 4px;
+  font-size: .7rem;
+}
+.rdv-hair-choice.sel .rdv-hair-check { border-color: var(--rdv-yellow); background: var(--rdv-yellow); color: #0b1629; }
+.rdv-hair-tip,
+.rdv-loyalty {
+  margin-top: 1.25rem;
+  padding: .9rem 1rem;
+  border: 1px solid rgba(201,168,76,.28);
+  border-radius: 10px;
+  background: rgba(201,168,76,.08);
+  color: rgba(240,235,225,.76);
+  font-size: .8rem;
+  line-height: 1.6;
+}
+.rdv-hair-tip strong,
+.rdv-loyalty strong { display: block; color: var(--rdv-yellow); margin-bottom: .15rem; }
+.rdv-loyalty { margin-top: 0; margin-bottom: 1rem; }
+.rdv-ftextarea { min-height: 100px; resize: vertical; line-height: 1.5; }
+.rdv-char-count { display: block; margin-top: .3rem; color: var(--rdv-faint); font-size: .68rem; text-align: right; }
+
+@media (max-width: 700px) {
+  .rdv-prog { top: 62px; }
+  .rdv-top { top: 64px; }
+  .rdv-hair-grid-5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rdv-hair-grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 380px) {
+  .rdv-hair-grid,
+  .rdv-hair-grid-3,
+  .rdv-hair-grid-5 { grid-template-columns: 1fr; }
+}
+
 /* â”€â”€ PROGRESS BAR â”€â”€ */
 .rdv-prog {
   position: fixed;
@@ -361,9 +430,10 @@
   margin-top: .75rem;
 }
 .rdv-card-title {
-  font-family: var(--rdv-bebas);
-  font-size: 1.7rem;
-  letter-spacing: .06em;
+  font-family: var(--font-playfair, 'Playfair Display', Georgia, serif);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -.015em;
   color: #fff;
   margin-bottom: .15rem;
   line-height: 1;
@@ -755,9 +825,10 @@
   color: var(--rdv-yellow);
 }
 .rdv-conf-title {
-  font-family: var(--rdv-bebas);
-  font-size: 2rem;
-  letter-spacing: .06em;
+  font-family: var(--font-playfair, 'Playfair Display', Georgia, serif);
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: -.02em;
   text-align: center;
   color: #fff;
   margin-bottom: .35rem;
@@ -974,7 +1045,7 @@
 
   /* Card */
   .rdv-card { padding: .9rem .95rem; border-radius: 12px; }
-  .rdv-card-title { font-size: 1.45rem; }
+  .rdv-card-title { font-size: 1.2rem; }
   .rdv-card-sub { font-size: .78rem; }
 }
 
@@ -999,4 +1070,18 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+
+/* Positionnement final sous la navigation globale. */
+.rdv-prog { position: sticky; top: 68px; }
+.rdv-top { position: sticky; top: 70px; }
+.rdv-sh { margin-top: 0; }
+
+@media (max-width: 620px) {
+  .rdv-prog { top: 62px; }
+  .rdv-top { top: 64px; }
+}
+.rdv-page :is(button, [role="button"], [role="checkbox"], input, textarea):focus-visible {
+  outline: 2px solid var(--rdv-yellow);
+  outline-offset: 3px;
 }

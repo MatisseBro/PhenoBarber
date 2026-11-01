@@ -54,22 +54,12 @@ export default function ConfirmationPage() {
   return (
     <div className="loc-page">
 
-      {/* Nav */}
-      <nav className="loc-nav">
-        <Link href="/" className="loc-nav-brand">
-          <span className="loc-nav-pheno">PHENO</span>
-          <span className="loc-nav-sep">·</span>
-          <span className="loc-nav-barber">BARBER</span>
-        </Link>
-        <Link href="/" className="loc-nav-back">← Accueil</Link>
-      </nav>
-
       {/* Hero */}
       <section className="loc-hero-section">
         <div className="loc-hero-inner">
           <p className="loc-hero-tag">Confirmation de demande</p>
           <h1 className="loc-hero-title">
-            DEMANDE<br /><span className="loc-hero-title-yellow">ENVOYÉE</span>
+            Demande<br /><span className="loc-hero-title-yellow">envoyée</span>
           </h1>
         </div>
       </section>
@@ -115,7 +105,7 @@ export default function ConfirmationPage() {
                 <span className="label">Durée</span>
                 <span className="value">{data.durationDetails}</span>
               </div>
-              {data.packLabel !== 'Aucun — 0 €' && (
+              {data.packLabel !== 'Aucun - 0 €' && (
                 <div className="loc-summary-row">
                   <span className="label">Pack</span>
                   <span className="value">{data.packLabel}</span>
@@ -225,7 +215,7 @@ export default function ConfirmationPage() {
       </section>
 
       <footer className="loc-footer">
-        <p>PHENO&amp;CO — Barbershop &amp; Coworking · Montpellier</p>
+        <p>PHENO&amp;CO - Barbershop &amp; Coworking · Montpellier</p>
       </footer>
 
     </div>

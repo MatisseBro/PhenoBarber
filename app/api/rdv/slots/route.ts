@@ -1,13 +1,17 @@
 import { NextResponse } from 'next/server'
 import { getSupabase } from '@/lib/supabase'
-
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
+import { isIsoDate } from '@/lib/validation'
+import { enforceRateLimit } from '@/lib/rate-limit'
+import { getBookingMinLeadMinutes, minimumBookingDateTime } from '@/lib/booking-time'
 
 export async function GET(req: Request) {
+  if (!await enforceRateLimit(req, { namespace: 'rdv-slots', limit: 120, windowSeconds: 60 })) {
+    return NextResponse.json({ bookings: [] }, { status: 429 })
+  }
   const { searchParams } = new URL(req.url)
   const date = searchParams.get('date')
 
-  if (!date || !DATE_RE.test(date)) {
+  if (!isIsoDate(date)) {
     return NextResponse.json({ bookings: [] })
   }
 
@@ -24,5 +28,7 @@ export async function GET(req: Request) {
       slot:     r.slot as string,
       duration: Number(r.total_duration),
     })),
+    minimumBookingDateTime: minimumBookingDateTime(),
+    minLeadMinutes: getBookingMinLeadMinutes(),
   })
 }

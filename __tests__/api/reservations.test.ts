@@ -1,26 +1,45 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // vi.hoisted : variables accessibles dans les factories vi.mock (qui sont hoistées)
-const { mockFrom, mockInsert, mockOrder, mockEq, mockUpdate, mockSelect } = vi.hoisted(() => ({
+const {
+  mockFrom, mockInsert, mockOrder, mockOr, mockEq, mockUpdate, mockSelect,
+  mockLocationEmail, mockLocationSms, mockUpsertClient,
+} = vi.hoisted(() => ({
   mockFrom:   vi.fn(),
   mockInsert: vi.fn(),
   mockOrder:  vi.fn(),
+  mockOr:     vi.fn(),
   mockEq:     vi.fn(),
   mockUpdate: vi.fn(),
   mockSelect: vi.fn(),
-}))
-
-vi.mock('@supabase/supabase-js', () => ({
-  createClient: vi.fn().mockReturnValue({ from: mockFrom }),
+  mockLocationEmail: vi.fn(),
+  mockLocationSms: vi.fn(),
+  mockUpsertClient: vi.fn(),
 }))
 
 vi.mock('@/lib/auth', () => ({
   isAdminAuthenticated: vi.fn().mockResolvedValue(true),
 }))
 
+vi.mock('@/lib/rate-limit', () => ({
+  enforceRateLimit: vi.fn().mockResolvedValue(true),
+}))
+
+vi.mock('@/lib/email', () => ({
+  sendLocationEmails: mockLocationEmail,
+}))
+
+vi.mock('@/lib/sms', () => ({
+  sendLocationSmsClient: mockLocationSms,
+}))
+
+vi.mock('@/lib/clients', () => ({
+  upsertClientLocation: mockUpsertClient,
+}))
+
 vi.mock('@/lib/supabase', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/lib/supabase')>()
-  return { ...actual, supabase: { from: mockFrom } }
+  return { ...actual, getSupabase: () => ({ from: mockFrom }) }
 })
 
 import { POST, GET }         from '@/app/api/reservations/route'
@@ -39,7 +58,7 @@ const reservation: Reservation = {
   typeDuration: 'court',
   formule: 'journee',
   pack: 'essentiel',
-  dateDebut: '2026-07-15',
+  dateDebut: '2099-07-15',
   statutPro: 'auto-entrepreneur',
   experience: '3-5',
   specialites: ['barber'],
@@ -48,21 +67,34 @@ const reservation: Reservation = {
   totalTTC: 102,
   acompte: 51,
   status: 'pending',
+  termsAcceptedAt: '2099-01-01T00:00:00Z',
+  documentsCommittedAt: '2099-01-01T00:00:00Z',
+}
+
+const reservationRequest = {
+  ...reservation,
+  termsAccepted: true,
+  documentsCommitment: true,
+  marketingConsent: false,
 }
 
 // ── POST /api/reservations ─────────────────────────────────────────────────
 
 describe('POST /api/reservations', () => {
   beforeEach(() => {
+    vi.clearAllMocks()
     mockFrom.mockReturnValue({ insert: mockInsert })
     mockInsert.mockResolvedValue({ error: null })
+    mockLocationEmail.mockResolvedValue({ ok: true, deliveries: [] })
+    mockLocationSms.mockResolvedValue({ ok: true, status: 'sent', retryable: false })
+    mockUpsertClient.mockResolvedValue(undefined)
   })
 
   it('crée une réservation et retourne 201', async () => {
     const req = new Request('http://localhost/api/reservations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reservation),
+      body: JSON.stringify(reservationRequest),
     })
     const res = await POST(req)
     expect(res.status).toBe(201)
@@ -74,7 +106,7 @@ describe('POST /api/reservations', () => {
     const req = new Request('http://localhost/api/reservations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reservation),
+      body: JSON.stringify(reservationRequest),
     })
     const res = await POST(req)
     expect(res.status).toBe(500)
@@ -85,11 +117,65 @@ describe('POST /api/reservations', () => {
     const req = new Request('http://localhost/api/reservations', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(reservation),
+      body: JSON.stringify(reservationRequest),
     })
     await POST(req)
     expect(mockFrom).toHaveBeenCalledWith('reservations')
     expect(mockInsert).toHaveBeenCalled()
+  })
+
+  it('ne crée et ne notifie qu’une fois deux requêtes concurrentes avec la même clé', async () => {
+    const idempotencyKey = '123e4567-e89b-42d3-a456-426614174000'
+    let stored: Record<string, unknown> | null = null
+    const maybeSingle = vi.fn(async () => ({
+      data: stored ? { request_fingerprint: stored.request_fingerprint } : null,
+      error: null,
+    }))
+    const idempotencyEq = vi.fn(() => ({ maybeSingle }))
+    const duplicateSelect = vi.fn(() => ({ eq: idempotencyEq }))
+    mockInsert.mockImplementation(async (rows: Record<string, unknown>[]) => {
+      if (stored) return { error: { code: '23505' } }
+      stored = rows[0]
+      return { error: null }
+    })
+    mockFrom.mockReturnValue({ insert: mockInsert, select: duplicateSelect })
+
+    const makeRequest = () => new Request('http://localhost/api/reservations', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idempotencyKey },
+      body: JSON.stringify(reservationRequest),
+    })
+    const responses = await Promise.all([POST(makeRequest()), POST(makeRequest())])
+    const bodies = await Promise.all(responses.map(response => response.json()))
+
+    expect(responses.map(response => response.status).sort()).toEqual([200, 201])
+    expect(bodies.some(body => body.duplicate === true)).toBe(true)
+    expect(mockLocationEmail).toHaveBeenCalledTimes(1)
+    expect(mockLocationSms).toHaveBeenCalledTimes(1)
+    expect(mockUpsertClient).toHaveBeenCalledTimes(1)
+  })
+
+  it('refuse la réutilisation d’une clé pour une autre demande', async () => {
+    mockInsert.mockResolvedValueOnce({ error: { code: '23505' } })
+    const maybeSingle = vi.fn().mockResolvedValue({
+      data: { request_fingerprint: 'f'.repeat(64) }, error: null,
+    })
+    mockFrom.mockReturnValue({
+      insert: mockInsert,
+      select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle })) })),
+    })
+    const response = await POST(new Request('http://localhost/api/reservations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Idempotency-Key': '123e4567-e89b-42d3-a456-426614174000',
+      },
+      body: JSON.stringify(reservationRequest),
+    }))
+
+    expect(response.status).toBe(409)
+    expect(mockLocationEmail).not.toHaveBeenCalled()
+    expect(mockLocationSms).not.toHaveBeenCalled()
   })
 })
 
@@ -107,7 +193,8 @@ describe('GET /api/reservations', () => {
   beforeEach(() => {
     mockFrom.mockReturnValue({ select: mockSelect })
     mockSelect.mockReturnValue({ order: mockOrder })
-    mockOrder.mockResolvedValue({ data: dbRows, error: null })
+    mockOrder.mockReturnValue({ or: mockOr })
+    mockOr.mockResolvedValue({ data: dbRows, error: null })
     vi.mocked(isAdminAuthenticated).mockResolvedValue(true)
   })
 
@@ -128,7 +215,7 @@ describe('GET /api/reservations', () => {
   })
 
   it('retourne 500 si Supabase échoue', async () => {
-    mockOrder.mockResolvedValueOnce({ data: null, error: { message: 'DB error' } })
+    mockOr.mockResolvedValueOnce({ data: null, error: { message: 'DB error' } })
     const res = await GET()
     expect(res.status).toBe(500)
   })

@@ -11,16 +11,25 @@ const securityHeaders = [
     value: [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline'",
+      "script-src-attr 'none'",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https://images.unsplash.com",
       "connect-src 'self' https://*.supabase.co",
       "frame-src https://maps.google.com https://www.google.com",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'none'",
+      "manifest-src 'self'",
+      "worker-src 'self' blob:",
+      "upgrade-insecure-requests",
     ].join('; '),
   },
 ]
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   async headers() {
     return [
       { source: '/(.*)', headers: securityHeaders },
@@ -36,7 +45,9 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 86400,
   },
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    removeConsole: process.env.NODE_ENV === 'production'
+      ? { exclude: ['error', 'warn'] }
+      : false,
   },
 }
 

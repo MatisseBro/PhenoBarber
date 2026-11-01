@@ -2,8 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Mentions légales & Confidentialité — PHENO BARBER',
+  title: 'Mentions légales & Confidentialité - PHENO BARBER',
   description: 'Mentions légales et politique de confidentialité du site PHENO BARBER, barbershop à Montpellier.',
+  alternates: { canonical: '/mentions-legales' },
 }
 
 export default function MentionsLegalesPage() {
@@ -16,7 +17,7 @@ export default function MentionsLegalesPage() {
         </nav>
 
         <h1 className="cgv-heading">Mentions légales</h1>
-        <p className="cgv-sub">Informations légales et politique de confidentialité — PHENO BARBER · Montpellier</p>
+        <p className="cgv-sub">Informations légales et politique de confidentialité - PHENO BARBER · Montpellier</p>
 
         {/* ── MENTIONS LÉGALES ── */}
 
@@ -80,7 +81,7 @@ export default function MentionsLegalesPage() {
         <h2 className="cgv-heading" style={{ marginTop: '3rem', marginBottom: '0.5rem' }}>
           Politique de confidentialité
         </h2>
-        <p className="cgv-sub">Conformément au RGPD (Règlement Général sur la Protection des Données) — en vigueur depuis le 25 mai 2018</p>
+        <p className="cgv-sub">Conformément au RGPD (Règlement Général sur la Protection des Données) - en vigueur depuis le 25 mai 2018</p>
 
         <div className="cgv-article">
           <h2>6. Responsable du traitement</h2>
@@ -96,7 +97,7 @@ export default function MentionsLegalesPage() {
         <div className="cgv-article">
           <h2>7. Données collectées</h2>
           <p style={{ marginBottom: '0.75rem' }}>
-            Nous collectons uniquement les données nécessaires au traitement de vos demandes de location de fauteuil :
+            Nous collectons uniquement les données nécessaires au traitement de vos rendez-vous, demandes de contact et locations de fauteuil :
           </p>
           <ul>
             <li><strong>Identité :</strong> nom, prénom</li>
@@ -123,8 +124,9 @@ export default function MentionsLegalesPage() {
 
           <h3>8.2 Envoi de confirmations par email</h3>
           <p>
-            Votre adresse email est utilisée pour vous envoyer un récapitulatif de votre demande via
-            le service EmailJS. Aucun envoi commercial sans votre accord préalable.
+            Votre adresse email et, lorsque nécessaire, votre numéro de téléphone sont utilisés pour envoyer
+            les confirmations et rappels transactionnels via Resend et Twilio. Aucun envoi commercial n&apos;est
+            effectué sans votre consentement explicite préalable.
             <br /><strong>Base légale :</strong> exécution d&apos;un contrat (art. 6.1.b RGPD).
           </p>
 
@@ -182,17 +184,28 @@ export default function MentionsLegalesPage() {
             <li>
               <strong>Cookie de session admin</strong> (<code>pheno_admin_session</code>) :
               cookie httpOnly utilisé uniquement pour l&apos;authentification au tableau de bord d&apos;administration.
-              Durée : 7 jours. Non accessible aux scripts.
+              Durée maximale : 8 heures. Non accessible aux scripts.
             </li>
           </ul>
           <p style={{ marginTop: '0.75rem' }}>
             Ce site n&apos;utilise pas de cookies publicitaires, de tracking marketing, ni de cookies tiers
-            de réseaux sociaux. Google Fonts est chargé directement depuis nos serveurs (pas de cookie Google).
+            de réseaux sociaux. Google Fonts est chargé directement depuis nos serveurs. La carte Google Maps
+            n&apos;est chargée qu&apos;après une action volontaire sur le bouton prévu à cet effet.
+          </p>
+          <p style={{ marginTop: '0.75rem' }}>
+            Pour faciliter une réservation interrompue, le navigateur conserve temporairement les informations
+            du formulaire et les coordonnées uniquement dans la session de l&apos;onglet, pendant au plus
+            <strong> 8 heures</strong>. Elles disparaissent à la fermeture de l&apos;onglet ou peuvent être supprimées
+            à tout moment depuis les données du site dans le navigateur.
           </p>
           <div className="cgv-highlight" style={{ marginTop: '1rem' }}>
             Aucun consentement aux cookies n&apos;est requis car seuls des cookies strictement nécessaires
             sont utilisés (exemptés de consentement selon les lignes directrices de la CNIL).
           </div>
+          <p style={{ marginTop: '0.75rem' }}>
+            Le consentement aux offres commerciales est facultatif et distinct de la réservation. Chaque message
+            concerné contient un lien permettant de retirer ce consentement immédiatement.
+          </p>
         </div>
 
         <div className="cgv-article">
@@ -202,21 +215,32 @@ export default function MentionsLegalesPage() {
           </p>
           <ul>
             <li>
-              <strong>Supabase Inc.</strong> — Stockage des données de réservation.
+              <strong>Supabase Inc.</strong> - Stockage des données de réservation.
               Données hébergées en Europe. Politique :{' '}
               <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--yellow)' }}>
                 supabase.com/privacy
               </a>
             </li>
             <li>
-              <strong>EmailJS</strong> — Service d&apos;envoi d&apos;emails de confirmation.
+              <strong>Resend</strong> - Service d&apos;envoi d&apos;emails transactionnels et, uniquement avec consentement,
+              de messages de fidélisation.
               Politique :{' '}
-              <a href="https://www.emailjs.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--yellow)' }}>
-                emailjs.com/legal/privacy-policy
+              <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--yellow)' }}>
+                resend.com/legal/privacy-policy
               </a>
             </li>
             <li>
-              <strong>Netlify Inc.</strong> — Hébergement du site. Les logs de connexion peuvent
+              <strong>Twilio</strong> - Envoi de confirmations et rappels par SMS lorsque ce canal est configuré.
+              Politique :{' '}
+              <a href="https://www.twilio.com/legal/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--yellow)' }}>
+                twilio.com/legal/privacy
+              </a>
+            </li>
+            <li>
+              <strong>Google Maps</strong> - Carte externe chargée uniquement à la demande de l&apos;utilisateur.
+            </li>
+            <li>
+              <strong>Netlify Inc.</strong> - Hébergement du site. Les logs de connexion peuvent
               être temporairement conservés. Politique :{' '}
               <a href="https://www.netlify.com/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--yellow)' }}>
                 netlify.com/privacy
@@ -232,14 +256,14 @@ export default function MentionsLegalesPage() {
             révision est indiquée ci-dessous. Nous vous encourageons à la consulter régulièrement.
           </p>
           <p style={{ marginTop: '0.75rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-            Dernière mise à jour : juillet 2026
+            Dernière mise à jour : octobre 2026
           </p>
         </div>
 
       </div>
 
       <footer className="site-footer">
-        <p>PHENO BARBER — Barbershop &amp; Coworking · Montpellier</p>
+        <p>PHENO BARBER - Barbershop &amp; Coworking · Montpellier</p>
         <p>
           <Link href="/" className="link-yellow">← Retour à l&apos;accueil</Link>
           {' · '}

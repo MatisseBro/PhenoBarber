@@ -1,71 +1,119 @@
+import { createHash, timingSafeEqual } from 'crypto'
 import { NextResponse } from 'next/server'
-import { getSupabase } from '@/lib/supabase'
-import { sendRdvReminder, sendRelance } from '@/lib/email'
-import { sendRdvReminderSms } from '@/lib/sms'
 import { getInactiveClients } from '@/lib/clients'
+import { sendRdvReminder, sendRelance } from '@/lib/email'
+import { deliverClaimed, type ClaimedDeliveryState } from '@/lib/notification-delivery'
+import { dayOfWeekInParis, monthInParis, tomorrowInParis } from '@/lib/paris-time'
+import { sendRdvReminderSms } from '@/lib/sms'
+import { getSupabase } from '@/lib/supabase'
 
-// Appelé chaque jour à 18h via un cron externe (cron-job.org, Netlify, etc.)
-// URL : POST /api/cron/reminders?secret=VOTRE_CRON_SECRET
+interface DeliveryCounters {
+  sent: number
+  failed: number
+  uncertain: number
+  skipped: number
+}
 
+function countDelivery(counters: DeliveryCounters, state: ClaimedDeliveryState) {
+  counters[state] += 1
+}
+
+// Appelé chaque jour à 18 h, heure de Paris, par un ordonnanceur externe.
+// L'ordonnanceur doit envoyer : Authorization: Bearer <CRON_SECRET>.
 export async function POST(req: Request) {
-  const secret = new URL(req.url).searchParams.get('secret')
-  if (!process.env.CRON_SECRET || secret !== process.env.CRON_SECRET) {
+  const expectedSecret = process.env.CRON_SECRET
+  const authorization = req.headers.get('authorization')
+  const suppliedSecret = authorization?.startsWith('Bearer ') ? authorization.slice(7) : ''
+  const expectedHash = createHash('sha256').update(expectedSecret ?? '').digest()
+  const suppliedHash = createHash('sha256').update(suppliedSecret).digest()
+  if (!expectedSecret || expectedSecret.length < 24 || !timingSafeEqual(expectedHash, suppliedHash)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const tomorrow = new Date()
-  tomorrow.setDate(tomorrow.getDate() + 1)
-  const tomorrowStr = tomorrow.toISOString().split('T')[0]
-
+  const now = new Date()
+  const tomorrow = tomorrowInParis(now)
+  const counters: DeliveryCounters = { sent: 0, failed: 0, uncertain: 0, skipped: 0 }
   const sb = getSupabase()
 
-  // ── 1. Rappels RDV J-1 ──────────────────────────────────────
-  const { data: rdvs, error: rdvErr } = await sb
+  const { data: rdvs, error: rdvError } = await sb
     .from('rdv_bookings')
-    .select('*')
-    .eq('date', tomorrowStr)
+    .select('id, nom, email, telephone, date, slot, prestation_label, degrade_label, options_labels, total_price, total_duration, categorie, group_id, person_label')
+    .eq('date', tomorrow)
     .neq('status', 'cancelled')
 
-  let remindersSent = 0
-  if (!rdvErr && rdvs) {
-    for (const r of rdvs) {
-      const data = {
-        nom:           r.nom as string,
-        email:         r.email as string,
-        telephone:     r.telephone as string,
-        date:          r.date as string,
-        slot:          r.slot as string,
-        prestationLabel: r.prestation_label as string,
-        degradeLabel:  r.degrade_label as string | undefined,
-        optionsLabels: (r.options_labels ?? []) as string[],
-        totalPrice:    Number(r.total_price),
-        totalDuration: Number(r.total_duration),
-        categorie:     r.categorie as string,
+  if (rdvError) {
+    console.error('[cron] Échec de lecture des rendez-vous à rappeler')
+    return NextResponse.json({ error: 'Reminder lookup failed' }, { status: 503 })
+  }
+
+  const groupedRows = new Map<string, typeof rdvs>()
+  for (const row of rdvs ?? []) {
+    const key = row.group_id ? `group:${row.group_id}` : `booking:${row.id}`
+    groupedRows.set(key, [...(groupedRows.get(key) ?? []), row])
+  }
+
+  for (const [reminderId, unsortedRows] of groupedRows) {
+    const rows = [...(unsortedRows ?? [])].sort((a, b) => String(a.slot).localeCompare(String(b.slot)))
+    const row = rows[0]
+    if (!row) continue
+    const isGroup = Boolean(row.group_id)
+    const data = {
+      nom: row.nom as string,
+      email: row.email as string,
+      telephone: row.telephone as string,
+      date: row.date as string,
+      slot: row.slot as string,
+      prestationLabel: isGroup
+        ? rows.map(item => `${item.person_label ?? 'Personne'} : ${item.prestation_label}`).join(' | ')
+        : row.prestation_label as string,
+      degradeLabel: isGroup ? undefined : row.degrade_label as string | undefined,
+      optionsLabels: isGroup ? [] : (row.options_labels ?? []) as string[],
+      totalPrice: rows.reduce((sum, item) => sum + Number(item.total_price), 0),
+      totalDuration: rows.reduce((sum, item) => sum + Number(item.total_duration), 0),
+      categorie: row.categorie as string,
+    }
+
+    countDelivery(
+      counters,
+      await deliverClaimed(`rdv-reminder:${reminderId}:email`, 'email', key => sendRdvReminder(data, key)),
+    )
+    countDelivery(
+      counters,
+      await deliverClaimed(
+        `rdv-reminder:${reminderId}:sms`,
+        'sms',
+        () => sendRdvReminderSms({
+          ...data,
+          prestationLabel: isGroup ? `Groupe de ${rows.length} personnes` : data.prestationLabel,
+        }),
+      ),
+    )
+  }
+
+  // Relances marketing le mardi, avec une seule clé par client et mois parisien.
+  if (dayOfWeekInParis(now) === 2) {
+    try {
+      const inactive = await getInactiveClients(30)
+      const campaignMonth = monthInParis(now)
+      for (const client of inactive) {
+        if (!client.email) continue
+        countDelivery(
+          counters,
+          await deliverClaimed(
+            `marketing-reactivation:${client.id}:${campaignMonth}:email`,
+            'email',
+            key => sendRelance(
+              { nom: client.nom, email: client.email!, lastRdvAt: client.lastRdvAt ?? undefined },
+              key,
+            ),
+          ),
+        )
       }
-      await sendRdvReminder(data)
-      await sendRdvReminderSms(data)
-      remindersSent++
+    } catch {
+      console.error('[cron] Échec de lecture des clients éligibles à la relance')
+      return NextResponse.json({ error: 'Marketing lookup failed' }, { status: 503 })
     }
   }
 
-  // ── 2. Relances clients inactifs (30 jours) ─────────────────
-  let relancesSent = 0
-  const today = new Date().getDay()
-  // Envoie les relances seulement le mardi (jour 2) pour ne pas spammer
-  if (today === 2) {
-    const inactive = await getInactiveClients(30)
-    for (const client of inactive) {
-      if (!client.email) continue
-      await sendRelance({ nom: client.nom, email: client.email, lastRdvAt: client.lastRdvAt ?? undefined })
-      relancesSent++
-    }
-  }
-
-  return NextResponse.json({
-    ok: true,
-    date: tomorrowStr,
-    remindersSent,
-    relancesSent,
-  })
+  return NextResponse.json({ ok: true, date: tomorrow, deliveries: counters })
 }
-

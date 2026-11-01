@@ -32,7 +32,7 @@ export async function PATCH(
     .update({ status })
     .eq('id', id)
   if (error) {
-    console.error('Supabase update error:', error)
+    console.error('Échec de mise à jour du statut de location')
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
   return NextResponse.json({ ok: true })

@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
 import { getSupabase } from '@/lib/supabase'
 import { isAdminAuthenticated } from '@/lib/auth'
+import { ALL_SLOTS } from '@/lib/schedule-types'
+import { readJsonBody } from '@/lib/http'
 
 const DEFAULT_CONFIG = {
   open_days: [2, 3, 4, 5, 6],
   slots: ['10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','16:00','16:30','17:00','17:30'],
 }
-
-const SLOT_RE = /^\d{2}:\d{2}$/
 
 export async function GET() {
   const sb = getSupabase()
@@ -36,7 +36,7 @@ export async function PUT(req: Request) {
   }
 
   let body: { openDays?: unknown; slots?: unknown }
-  try { body = await req.json() } catch {
+  try { body = await readJsonBody(req, 8_192) } catch {
     return NextResponse.json({ error: 'Requête invalide' }, { status: 400 })
   }
 
@@ -45,8 +45,10 @@ export async function PUT(req: Request) {
   if (
     !Array.isArray(openDays) || openDays.length > 7 ||
     !openDays.every((d: unknown) => typeof d === 'number' && d >= 0 && d <= 6) ||
+    new Set(openDays).size !== openDays.length ||
     !Array.isArray(slots) || slots.length === 0 || slots.length > 50 ||
-    !slots.every((s: unknown) => typeof s === 'string' && SLOT_RE.test(s))
+    !slots.every((s: unknown) => typeof s === 'string' && ALL_SLOTS.includes(s)) ||
+    new Set(slots).size !== slots.length
   ) {
     return NextResponse.json({ error: 'Données invalides' }, { status: 422 })
   }
@@ -56,7 +58,7 @@ export async function PUT(req: Request) {
     .upsert({ id: 'main', open_days: openDays, slots, updated_at: new Date().toISOString() })
 
   if (error) {
-    console.error('Supabase schedule upsert error:', error)
+    console.error('Échec de mise à jour des horaires')
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
   return NextResponse.json({ ok: true })

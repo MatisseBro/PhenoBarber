@@ -1,4 +1,5 @@
 import { getSupabase } from './supabase'
+import { normalizeEmail, normalizePhone } from './validation'
 
 export interface Client {
   id: string
@@ -23,109 +24,93 @@ function fromRow(r: Record<string, unknown>): Client {
 }
 
 export async function upsertClientRdv(data: {
-  nom: string; email: string; telephone: string
+  nom: string; email: string; telephone: string; marketingConsent?: boolean
 }): Promise<void> {
   try {
+    const email = normalizeEmail(data.email)
+    const telephoneNormalized = normalizePhone(data.telephone)
+    if (!email || !telephoneNormalized) return
     const sb = getSupabase()
-    const { data: existing } = await sb
-      .from('clients')
-      .select('id, rdv_count')
-      .or(`email.eq.${data.email},telephone.eq.${data.telephone}`)
-      .limit(1)
-      .maybeSingle()
-
-    if (existing) {
-      await sb
-        .from('clients')
-        .update({
-          nom: data.nom,
-          email: data.email,
-          telephone: data.telephone,
-          last_rdv_at: new Date().toISOString(),
-          rdv_count: (existing.rdv_count ?? 0) + 1,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', existing.id)
-    } else {
-      const { randomUUID } = await import('crypto')
-      await sb.from('clients').insert([{
-        id: randomUUID(),
-        nom: data.nom,
-        email: data.email,
-        telephone: data.telephone,
-        last_rdv_at: new Date().toISOString(),
-        rdv_count: 1,
-        location_count: 0,
-      }])
-    }
-  } catch (err) {
-    console.error('[clients] upsertClientRdv failed:', err)
+    const { error } = await sb.rpc('upsert_client_activity', {
+      p_nom: data.nom.trim(),
+      p_email: email,
+      p_telephone: data.telephone.trim(),
+      p_telephone_normalized: telephoneNormalized,
+      p_activity: 'rdv',
+      p_marketing_consent: data.marketingConsent ?? null,
+    })
+    if (error) throw error
+  } catch {
+    console.error('[clients] Échec de mise à jour du client après rendez-vous')
   }
 }
 
 export async function upsertClientLocation(data: {
-  nom: string; email: string; telephone: string
+  nom: string; email: string; telephone: string; marketingConsent?: boolean
 }): Promise<void> {
   try {
+    const email = normalizeEmail(data.email)
+    const telephoneNormalized = normalizePhone(data.telephone)
+    if (!email || !telephoneNormalized) return
     const sb = getSupabase()
-    const { data: existing } = await sb
-      .from('clients')
-      .select('id, location_count')
-      .or(`email.eq.${data.email},telephone.eq.${data.telephone}`)
-      .limit(1)
-      .maybeSingle()
-
-    if (existing) {
-      await sb
-        .from('clients')
-        .update({
-          nom: data.nom,
-          email: data.email,
-          telephone: data.telephone,
-          location_count: (existing.location_count ?? 0) + 1,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', existing.id)
-    } else {
-      const { randomUUID } = await import('crypto')
-      await sb.from('clients').insert([{
-        id: randomUUID(),
-        nom: data.nom,
-        email: data.email,
-        telephone: data.telephone,
-        last_rdv_at: null,
-        rdv_count: 0,
-        location_count: 1,
-      }])
-    }
-  } catch (err) {
-    console.error('[clients] upsertClientLocation failed:', err)
+    const { error } = await sb.rpc('upsert_client_activity', {
+      p_nom: data.nom.trim(),
+      p_email: email,
+      p_telephone: data.telephone.trim(),
+      p_telephone_normalized: telephoneNormalized,
+      p_activity: 'location',
+      p_marketing_consent: data.marketingConsent ?? null,
+    })
+    if (error) throw error
+  } catch {
+    console.error('[clients] Échec de mise à jour du client après demande de location')
   }
 }
 
-export async function lookupClient(emailOrPhone: string): Promise<Client | null> {
-  const q = emailOrPhone.trim().toLowerCase()
-  if (!q) return null
+export async function lookupClient(emailValue: string, phoneValue: string): Promise<Client | null> {
+  const email = normalizeEmail(emailValue)
+  const telephone = normalizePhone(phoneValue)
+  if (!email || !telephone) return null
   const sb = getSupabase()
-  const { data } = await sb
+  const { data, error } = await sb
     .from('clients')
     .select('*')
-    .or(`email.ilike.${q},telephone.eq.${emailOrPhone.trim()}`)
+    .eq('email', email)
+    .eq('telephone_normalized', telephone)
     .limit(1)
     .maybeSingle()
+  if (error) throw error
   return data ? fromRow(data as Record<string, unknown>) : null
+}
+
+export async function isReturningClient(emailValue: string, phoneValue: string): Promise<boolean> {
+  const email = normalizeEmail(emailValue)
+  const telephone = normalizePhone(phoneValue)
+  if (!email || !telephone) return false
+  const sb = getSupabase()
+  const result = await sb
+    .from('clients')
+    .select('id, rdv_count')
+    .eq('email', email)
+    .eq('telephone_normalized', telephone)
+    .limit(1)
+    .maybeSingle()
+  if (result.error) throw result.error
+  return Number(result.data?.rdv_count ?? 0) > 0
 }
 
 export async function getInactiveClients(daysInactive: number): Promise<Client[]> {
   const cutoff = new Date()
   cutoff.setDate(cutoff.getDate() - daysInactive)
   const sb = getSupabase()
-  const { data } = await sb
+  const { data, error } = await sb
     .from('clients')
     .select('*')
     .not('email', 'is', null)
+    .eq('marketing_consent', true)
     .lt('last_rdv_at', cutoff.toISOString())
     .order('last_rdv_at', { ascending: true })
     .limit(100)
+  if (error) throw error
   return (data ?? []).map(r => fromRow(r as Record<string, unknown>))
 }

@@ -10,6 +10,9 @@ export async function DELETE(
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   }
   const { id } = await params
+  if (!id || id.length > 100 || !/^[a-zA-Z0-9-]+$/.test(id)) {
+    return NextResponse.json({ error: 'ID invalide' }, { status: 422 })
+  }
   const { error } = await getSupabase()
     .from('schedule_blocks')
     .delete()

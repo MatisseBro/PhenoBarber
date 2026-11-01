@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════
-   LOCATION DE FAUTEUIL — DA aligned with landing page
+   LOCATION DE FAUTEUIL - DA aligned with landing page
    ════════════════════════════════════════════ */
 
 /* ── Base ─────────────────────────────────── */
@@ -93,11 +93,12 @@
 }
 
 .loc-hero-title {
-  font-family: var(--font-bebas, 'Bebas Neue', sans-serif);
-  font-size: clamp(3rem, 10vw, 6rem);
+  font-family: var(--font-playfair, 'Playfair Display', Georgia, serif);
+  font-size: clamp(2.7rem, 7.5vw, 5.3rem);
   color: #F0EBE1;
-  letter-spacing: .04em;
-  line-height: .95;
+  font-weight: 600;
+  letter-spacing: -.035em;
+  line-height: 1.02;
   margin: 0 0 .6rem;
 }
 
@@ -502,7 +503,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* ════════════════════════════════════════════
-   RIGHT COL — RECAP PRIX + PAIEMENT
+   RIGHT COL - RECAP PRIX + PAIEMENT
    ════════════════════════════════════════════ */
 
 .loc-summary-rows { display: flex; flex-direction: column; gap: .45rem; }
@@ -689,4 +690,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .loc-toast h4 { font-weight: 600; margin-bottom: .2rem; font-size: .9rem; }
 .loc-toast p { font-size: .78rem; color: rgba(240,235,225,.45); }
 .loc-toast.error h4 { color: #ef4444; }
+
+.loc-page :is(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid #FDE047;
+  outline-offset: 3px;
+}
 

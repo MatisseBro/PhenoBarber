@@ -4,4 +4,4 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 
-Sitemap: https://phenoandco.com/sitemap.xml
+Sitemap: https://phenoandco.fr/sitemap.xml

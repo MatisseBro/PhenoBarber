@@ -2,8 +2,9 @@ module.exports = {
   apps: [
     {
       name: 'phenoandco',
-      script: './node_modules/.bin/next',
+      script: 'npm',
       args: 'start',
+      interpreter: 'none',
       instances: 1,
       autorestart: true,
       watch: false,

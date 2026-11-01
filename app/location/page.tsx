@@ -1,8 +1,10 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { calculateLocationPrice } from '@/lib/pricing'
+import type { FormulaType, PackType } from '@/lib/types'
 import './location.css'
 
 const TIME_SLOTS: string[] = []
@@ -15,39 +17,6 @@ function getTomorrow() {
   const d = new Date()
   d.setDate(d.getDate() + 1)
   return d.toISOString().split('T')[0]
-}
-
-function countBusinessDays(start: string, end: string) {
-  let count = 0
-  const cur = new Date(start)
-  cur.setHours(0, 0, 0, 0)
-  const endD = new Date(end)
-  endD.setHours(0, 0, 0, 0)
-  while (cur <= endD) {
-    const day = cur.getDay()
-    if (day !== 0 && day !== 1) count++
-    cur.setDate(cur.getDate() + 1)
-  }
-  return Math.max(1, count)
-}
-
-function getStatutLabel(v: string) {
-  const m: Record<string, string> = {
-    auto: 'Auto-entrepreneur / Micro-entreprise',
-    societe: 'Société',
-    creation: 'En cours de création',
-  }
-  return m[v] ?? v
-}
-
-function getExperienceLabel(v: string) {
-  const m: Record<string, string> = {
-    '0-3': "0 à 3 ans d'expérience",
-    '3-5': "3 à 5 ans d'expérience",
-    '5-10': "5 à 10 ans d'expérience",
-    '10+': "Plus de 10 ans d'expérience",
-  }
-  return m[v] ?? v
 }
 
 /* ── Mappings vers les types Supabase ── */
@@ -79,65 +48,6 @@ function getCalendarLink(title: string, details: string, startDate: string, endD
   return url.toString()
 }
 
-interface PriceInfo {
-  baseHT: number; packHT: number; totalHT: number; tva: number; totalTTC: number
-  acompteTaux: number; acompteTTC: number; soldeTTC: number
-  formuleLabel: string; packLabel: string; durationDetails: string; businessDays: number
-}
-
-function calcPrice(
-  duree: string, formuleCourte: string, formuleLongue: string, packMateriel: string,
-  dateDebut: string, dateFin: string, heureDebut: string, heureFin: string
-): PriceInfo | null {
-  if (!dateDebut) return null
-  const endDate = dateFin || dateDebut
-  const businessDays = countBusinessDays(dateDebut, endDate)
-
-  let baseHT = 0, formuleLabel = '', durationDetails = ''
-
-  if (duree === 'courte') {
-    if (formuleCourte === 'heure') {
-      const [h1, m1] = heureDebut.split(':').map(Number)
-      const [h2, m2] = heureFin.split(':').map(Number)
-      const hours = Math.max(0, ((h2 * 60 + m2) - (h1 * 60 + m1)) / 60)
-      baseHT = hours * 10 * businessDays
-      formuleLabel = "À l'heure — 10 € HT"
-      durationDetails = `${hours.toFixed(1)}h / jour sur ${businessDays} jour${businessDays > 1 ? 's' : ''} ouvré${businessDays > 1 ? 's' : ''}`
-    } else if (formuleCourte === 'demi') {
-      baseHT = 35 * businessDays
-      formuleLabel = 'Demi-journée (4h) — 35 € HT'
-      durationDetails = `Demi-journée (4h) × ${businessDays} jour${businessDays > 1 ? 's' : ''} ouvré${businessDays > 1 ? 's' : ''}`
-    } else {
-      baseHT = 65 * businessDays
-      formuleLabel = 'Journée — 65 € HT'
-      durationDetails = `${businessDays} jour${businessDays > 1 ? 's' : ''} ouvré${businessDays > 1 ? 's' : ''}`
-    }
-  } else {
-    if (formuleLongue === 'semaine') {
-      baseHT = 60 * businessDays
-      formuleLabel = 'Semaine — 60 € HT / jour'
-      durationDetails = `${businessDays} jour${businessDays > 1 ? 's' : ''} ouvré${businessDays > 1 ? 's' : ''} (Tarif Semaine)`
-    } else {
-      baseHT = 55 * businessDays
-      formuleLabel = 'Mensuel — 55 € HT / jour'
-      durationDetails = `${businessDays} jour${businessDays > 1 ? 's' : ''} ouvré${businessDays > 1 ? 's' : ''} (Tarif Mensuel)`
-    }
-  }
-
-  let packHT = 0, packLabel = 'Aucun — 0 €'
-  if (packMateriel === 'essentiel') { packHT = 20 * businessDays; packLabel = 'Pack Essentiel — 20 € HT / jour' }
-  else if (packMateriel === 'premium') { packHT = 30 * businessDays; packLabel = 'Pack Premium — 30 € HT / jour' }
-
-  const totalHT = baseHT + packHT
-  const tva = totalHT * 0.2
-  const totalTTC = totalHT + tva
-  const acompteTaux = duree === 'courte' ? 0.5 : 0.25
-  const acompteTTC = totalTTC * acompteTaux
-  const soldeTTC = totalTTC - acompteTTC
-
-  return { baseHT, packHT, totalHT, tva, totalTTC, acompteTaux, acompteTTC, soldeTTC, formuleLabel, packLabel, durationDetails, businessDays }
-}
-
 export default function LocationPage() {
   const tomorrow = getTomorrow()
   const router = useRouter()
@@ -163,9 +73,11 @@ export default function LocationPage() {
   const [certifDiplome, setCertifDiplome] = useState(false)
   const [certifDocs, setCertifDocs] = useState(false)
   const [cgv, setCgv] = useState(false)
+  const [marketingConsent, setMarketingConsent] = useState(false)
 
   const [sending, setSending] = useState(false)
   const [toast, setToast] = useState<{ title: string; msg: string; err: boolean } | null>(null)
+  const idempotencyRef = useRef<{ key: string; payload: string } | null>(null)
 
   /* ── Time constraints ── */
   const getConstrainedTimes = useCallback(() => {
@@ -190,7 +102,16 @@ export default function LocationPage() {
   const { debutDisabled, finDisabled } = getConstrainedTimes()
 
   /* ── Price ── */
-  const price = calcPrice(duree, formuleCourte, formuleLongue, packMateriel, dateDebut, dateFin, heureDebut, heureFin)
+  const selectedFormula = FORMULE_MAP[duree === 'courte' ? formuleCourte : formuleLongue] as FormulaType
+  const price = calculateLocationPrice({
+    typeDuration: duree === 'courte' ? 'court' : 'long',
+    formule: selectedFormula,
+    pack: packMateriel as PackType,
+    dateDebut,
+    dateFin: dateFin || undefined,
+    heureDebut,
+    heureFin,
+  })
 
   /* ── Date validation ── */
   function validateDate(val: string, setter: (v: string) => void) {
@@ -252,12 +173,22 @@ export default function LocationPage() {
       totalTTC: price?.totalTTC ?? 0,
       acompte: price?.acompteTTC ?? 0,
       notes: commentaire || undefined,
+      termsAccepted: cgv,
+      documentsCommitment: certifDocs,
+      marketingConsent,
     }
     try {
+      const serializedPayload = JSON.stringify(reservationPayload)
+      if (!idempotencyRef.current || idempotencyRef.current.payload !== serializedPayload) {
+        idempotencyRef.current = { key: crypto.randomUUID(), payload: serializedPayload }
+      }
       const res = await fetch('/api/reservations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(reservationPayload),
+        headers: {
+          'Content-Type': 'application/json',
+          'Idempotency-Key': idempotencyRef.current.key,
+        },
+        body: serializedPayload,
       })
       if (!res.ok) throw new Error()
       const json = await res.json().catch(() => ({}))
@@ -286,24 +217,14 @@ export default function LocationPage() {
   return (
     <div className="loc-page">
 
-      {/* ── NAV ── */}
-      <nav className="loc-nav">
-        <Link href="/" className="loc-nav-brand">
-          <span className="loc-nav-pheno">PHENO</span>
-          <span className="loc-nav-sep">·</span>
-          <span className="loc-nav-barber">BARBER</span>
-        </Link>
-        <Link href="/" className="loc-nav-back">← Accueil</Link>
-      </nav>
-
       {/* ── HERO ── */}
       <section className="loc-hero-section">
         <div className="loc-hero-inner">
           <p className="loc-hero-tag">Barbershop Premium · Montpellier</p>
           <h1 className="loc-hero-title">
-            LOUER UN<br /><span className="loc-hero-title-yellow">FAUTEUIL</span>
+            Louer un<br /><span className="loc-hero-title-yellow">fauteuil</span>
           </h1>
-          <p className="loc-hero-sub">Espace professionnel — 18 rue d&apos;Alger, Saint-Roch</p>
+          <p className="loc-hero-sub">Espace professionnel - 18 rue d&apos;Alger, Saint-Roch</p>
           <div className="loc-hero-btns">
             <button onClick={() => document.getElementById('reservation')?.scrollIntoView({ behavior: 'smooth' })} className="loc-hero-btn loc-btn-yellow">
               Réserver un fauteuil
@@ -323,7 +244,7 @@ export default function LocationPage() {
         <div className="loc-container">
 
           <header className="loc-header">
-            <h2 className="loc-header-title">RÉSERVER UN <span>FAUTEUIL</span></h2>
+            <h2 className="loc-header-title">Réserver un <span>fauteuil</span></h2>
             <p className="loc-header-sub">
               Choisissez vos dates, votre formule et vos options.<br />
               La réservation est confirmée après paiement de l&apos;acompte.
@@ -332,7 +253,7 @@ export default function LocationPage() {
 
           <div className="loc-layout">
 
-            {/* ══════════════ LEFT — FORMULAIRE ══════════════ */}
+            {/* ══════════════ LEFT - FORMULAIRE ══════════════ */}
             <form onSubmit={handleSubmit} className="loc-form-col" id="reservation-form">
 
               {/* TYPE DE LOCATION */}
@@ -340,8 +261,8 @@ export default function LocationPage() {
                 <div className="loc-fcard-header"><span>⏱</span><h3>Type de location</h3></div>
 
                 <div className="loc-form-group">
-                  <label className="loc-form-label">Durée de location *</label>
-                  <div className="loc-radio-cards">
+                  <span className="loc-form-label" id="location-duration-label">Durée de location *</span>
+                  <div className="loc-radio-cards" role="radiogroup" aria-labelledby="location-duration-label">
                     {([['courte', 'Courte durée', 'Heure, journée\nAcompte 50%'], ['longue', 'Semaine & Mensuel', 'Semaine ou Mois\nAcompte 25%']] as const).map(([val, title, desc]) => (
                       <label key={val} className={`loc-radio-card${duree === val ? ' selected' : ''}`} onClick={() => setDuree(val)}>
                         <input type="radio" name="duree" value={val} checked={duree === val} onChange={() => setDuree(val)} />
@@ -356,26 +277,26 @@ export default function LocationPage() {
 
                 <div className="loc-form-row">
                   <div className="loc-form-group">
-                    <label className="loc-form-label">{duree === 'courte' ? 'Formule courte *' : 'Formule longue *'}</label>
+                    <label className="loc-form-label" htmlFor="location-formula">{duree === 'courte' ? 'Formule courte *' : 'Formule longue *'}</label>
                     {duree === 'courte' ? (
-                      <select className="loc-form-select" value={formuleCourte} onChange={e => setFormuleCourte(e.target.value)}>
-                        <option value="heure">À l&apos;heure — 10 € HT</option>
-                        <option value="demi">Demi-journée (4h) — 35 € HT</option>
-                        <option value="journee">Journée — 65 € HT</option>
+                      <select id="location-formula" className="loc-form-select" value={formuleCourte} onChange={e => setFormuleCourte(e.target.value)}>
+                        <option value="heure">À l&apos;heure - 10 € HT</option>
+                        <option value="demi">Demi-journée (4h) - 35 € HT</option>
+                        <option value="journee">Journée - 65 € HT</option>
                       </select>
                     ) : (
-                      <select className="loc-form-select" value={formuleLongue} onChange={e => setFormuleLongue(e.target.value)}>
-                        <option value="semaine">Semaine — 60 € HT / jour</option>
-                        <option value="mensuel">Mensuel — 55 € HT / jour</option>
+                      <select id="location-formula" className="loc-form-select" value={formuleLongue} onChange={e => setFormuleLongue(e.target.value)}>
+                        <option value="semaine">Semaine - 60 € HT / jour</option>
+                        <option value="mensuel">Mensuel - 55 € HT / jour</option>
                       </select>
                     )}
                   </div>
                   <div className="loc-form-group">
-                    <label className="loc-form-label">Pack Matériel</label>
-                    <select className="loc-form-select" value={packMateriel} onChange={e => setPackMateriel(e.target.value)}>
-                      <option value="aucun">Aucun — 0 €</option>
-                      <option value="essentiel">Pack Essentiel — 20 € HT / j</option>
-                      <option value="premium">Pack Premium — 30 € HT / j</option>
+                    <label className="loc-form-label" htmlFor="location-pack">Pack Matériel</label>
+                    <select id="location-pack" className="loc-form-select" value={packMateriel} onChange={e => setPackMateriel(e.target.value)}>
+                      <option value="aucun">Aucun - 0 €</option>
+                      <option value="essentiel">Pack Essentiel - 20 € HT / j</option>
+                      <option value="premium">Pack Premium - 30 € HT / j</option>
                     </select>
                   </div>
                 </div>
@@ -396,28 +317,28 @@ export default function LocationPage() {
 
                 <div className="loc-form-row">
                   <div className="loc-form-group">
-                    <label className="loc-form-label">Date de début *</label>
-                    <input type="date" className="loc-form-input" required min={tomorrow} value={dateDebut}
+                    <label className="loc-form-label" htmlFor="location-start-date">Date de début *</label>
+                    <input id="location-start-date" type="date" className="loc-form-input" required min={tomorrow} value={dateDebut}
                       onChange={e => validateDate(e.target.value, setDateDebut)} />
                   </div>
                   <div className="loc-form-group">
-                    <label className="loc-form-label">Date de fin (optionnel)</label>
-                    <input type="date" className="loc-form-input" min={dateDebut || tomorrow} value={dateFin}
+                    <label className="loc-form-label" htmlFor="location-end-date">Date de fin {duree === 'longue' ? '*' : '(optionnel)'}</label>
+                    <input id="location-end-date" type="date" className="loc-form-input" required={duree === 'longue'} min={dateDebut || tomorrow} value={dateFin}
                       onChange={e => validateDate(e.target.value, setDateFin)} />
                   </div>
                 </div>
 
                 <div className="loc-form-row">
                   <div className="loc-form-group">
-                    <label className="loc-form-label">Heure de début *</label>
-                    <select className="loc-form-select" value={heureDebut} disabled={debutDisabled}
+                    <label className="loc-form-label" htmlFor="location-start-time">Heure de début *</label>
+                    <select id="location-start-time" className="loc-form-select" value={heureDebut} disabled={debutDisabled}
                       onChange={e => setHeureDebut(e.target.value)}>
                       {TIME_SLOTS.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
                   <div className="loc-form-group">
-                    <label className="loc-form-label">Heure de fin *</label>
-                    <select className="loc-form-select" value={heureFin} disabled={finDisabled}
+                    <label className="loc-form-label" htmlFor="location-end-time">Heure de fin *</label>
+                    <select id="location-end-time" className="loc-form-select" value={heureFin} disabled={finDisabled}
                       onChange={e => setHeureFin(e.target.value)}>
                       {TIME_SLOTS.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
@@ -431,18 +352,18 @@ export default function LocationPage() {
 
                 <div className="loc-form-row">
                   <div className="loc-form-group">
-                    <label className="loc-form-label">Nom / prénom *</label>
-                    <input type="text" className="loc-form-input" placeholder="Votre nom" required value={nom} onChange={e => setNom(e.target.value)} />
+                    <label className="loc-form-label" htmlFor="location-name">Nom / prénom *</label>
+                    <input id="location-name" type="text" className="loc-form-input" placeholder="Votre nom" required value={nom} onChange={e => setNom(e.target.value)} />
                   </div>
                   <div className="loc-form-group">
-                    <label className="loc-form-label">Email *</label>
-                    <input type="email" className="loc-form-input" placeholder="votre@email.com" required value={email} onChange={e => setEmail(e.target.value)} />
+                    <label className="loc-form-label" htmlFor="location-email">Email *</label>
+                    <input id="location-email" type="email" className="loc-form-input" placeholder="votre@email.com" required value={email} onChange={e => setEmail(e.target.value)} />
                   </div>
                 </div>
 
                 <div className="loc-form-group">
-                  <label className="loc-form-label">Téléphone / WhatsApp *</label>
-                  <input type="tel" className="loc-form-input" placeholder="06 00 00 00 00" required value={telephone} onChange={e => setTelephone(e.target.value)} />
+                  <label className="loc-form-label" htmlFor="location-phone">Téléphone / WhatsApp *</label>
+                  <input id="location-phone" type="tel" className="loc-form-input" placeholder="06 00 00 00 00" required value={telephone} onChange={e => setTelephone(e.target.value)} />
                 </div>
               </div>
 
@@ -451,8 +372,8 @@ export default function LocationPage() {
                 <div className="loc-fcard-header"><span>💼</span><h3>Profil Professionnel</h3></div>
 
                 <div className="loc-form-group">
-                  <label className="loc-form-label">Statut *</label>
-                  <div className="loc-radio-group">
+                  <span className="loc-form-label" id="location-status-label">Statut *</span>
+                  <div className="loc-radio-group" role="radiogroup" aria-labelledby="location-status-label">
                     {[['auto', 'Auto-entrepreneur / Micro'], ['societe', 'Société'], ['creation', 'En cours de création']].map(([val, label]) => (
                       <label key={val} className="loc-radio-item">
                         <input type="radio" name="statut" value={val} checked={statut === val} onChange={() => setStatut(val)} />
@@ -463,8 +384,8 @@ export default function LocationPage() {
                 </div>
 
                 <div className="loc-form-group">
-                  <label className="loc-form-label">Expérience *</label>
-                  <select className="loc-form-select" value={experience} onChange={e => setExperience(e.target.value)}>
+                  <label className="loc-form-label" htmlFor="location-experience">Expérience *</label>
+                  <select id="location-experience" className="loc-form-select" value={experience} onChange={e => setExperience(e.target.value)}>
                     <option value="0-3">0–3 ans</option>
                     <option value="3-5">3–5 ans</option>
                     <option value="5-10">5–10 ans</option>
@@ -511,12 +432,16 @@ export default function LocationPage() {
                       <input type="checkbox" required checked={cgv} onChange={e => setCgv(e.target.checked)} />
                       <span>J&apos;ai lu et j&apos;accepte les <Link href="/cgv-location" target="_blank" rel="noopener noreferrer" style={{ color: '#FDE047', textDecoration: 'underline' }}>CGV &amp; Contrat de location</Link> PHENO&amp;CO.</span>
                     </label>
+                    <label className="loc-checkbox-item">
+                      <input type="checkbox" checked={marketingConsent} onChange={e => setMarketingConsent(e.target.checked)} />
+                      <span>J&apos;accepte de recevoir occasionnellement les offres PHENO&amp;CO. Facultatif, révocable à tout moment.</span>
+                    </label>
                   </div>
                 </div>
 
                 <div className="loc-form-group" style={{ marginTop: '1.5rem' }}>
-                  <label className="loc-form-label">Commentaire (optionnel)</label>
-                  <textarea className="loc-form-textarea" placeholder="Précisez vos jours de présence souhaités, vos besoins…" value={commentaire} onChange={e => setCommentaire(e.target.value)} />
+                  <label className="loc-form-label" htmlFor="location-comment">Commentaire (optionnel)</label>
+                  <textarea id="location-comment" className="loc-form-textarea" placeholder="Précisez vos jours de présence souhaités, vos besoins…" value={commentaire} onChange={e => setCommentaire(e.target.value)} />
                 </div>
 
                 <button type="submit" className="loc-submit-btn" disabled={sending}>
@@ -526,7 +451,7 @@ export default function LocationPage() {
 
             </form>
 
-            {/* ══════════════ RIGHT — PRIX + PAIEMENT ══════════════ */}
+            {/* ══════════════ RIGHT - PRIX + PAIEMENT ══════════════ */}
             <div className="loc-summary-col">
               <div className="loc-sticky-wrap">
 
@@ -662,7 +587,7 @@ export default function LocationPage() {
       </section>
 
       <footer className="loc-footer">
-        <p>PHENO&amp;CO — Barbershop &amp; Coworking · Montpellier</p>
+        <p>PHENO&amp;CO - Barbershop &amp; Coworking · Montpellier</p>
       </footer>
 
       {toast && (

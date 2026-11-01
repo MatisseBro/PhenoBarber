@@ -27,6 +27,9 @@ export interface Reservation {
   acompte: number
   status: StatusType
   notes?: string
+  termsAcceptedAt?: string
+  documentsCommittedAt?: string
+  marketingConsent?: boolean
 }
 
 export interface PricingResult {

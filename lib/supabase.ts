@@ -1,14 +1,21 @@
-import { createClient } from '@supabase/supabase-js'
+import { PostgrestClient } from '@supabase/postgrest-js'
 import type {
   Reservation, FormulaType, PackType,
   StatutPro, ExperienceType, SpecialiteType, StatusType,
 } from './types'
 
 export function getSupabase() {
-  return createClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
+  const url = process.env.SUPABASE_URL?.trim()
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()
+  if (!url || !serviceRoleKey) {
+    throw new Error('Configuration Supabase serveur incomplète')
+  }
+  return new PostgrestClient(`${url.replace(/\/$/, '')}/rest/v1`, {
+    headers: {
+      apikey: serviceRoleKey,
+      Authorization: `Bearer ${serviceRoleKey}`,
+    },
+  })
 }
 
 export function toRow(r: Reservation): Record<string, unknown> {
@@ -34,6 +41,9 @@ export function toRow(r: Reservation): Record<string, unknown> {
     acompte:       r.acompte,
     status:        r.status,
     notes:         r.notes ?? null,
+    terms_accepted_at: r.termsAcceptedAt ?? null,
+    documents_committed_at: r.documentsCommittedAt ?? null,
+    marketing_consent: r.marketingConsent ?? false,
   }
 }
 
@@ -61,5 +71,8 @@ export function fromRow(row: any): Reservation {
     acompte:      Number(row.acompte),
     status:       row.status as StatusType,
     notes:        row.notes ?? undefined,
+    termsAcceptedAt: row.terms_accepted_at ?? undefined,
+    documentsCommittedAt: row.documents_committed_at ?? undefined,
+    marketingConsent: Boolean(row.marketing_consent),
   }
 }

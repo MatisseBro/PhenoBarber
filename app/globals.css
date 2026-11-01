@@ -1,4 +1,6 @@
 :root {
+  --font-poppins: var(--font-plus-jakarta);
+  --font-playfair: var(--font-plus-jakarta);
   --yellow: #FEE86C;
   --yellow-hover: #fde047;
   --yellow-dim: rgba(254, 232, 108, 0.12);
@@ -30,12 +32,21 @@
 
   --font-sans: var(--font-poppins, 'Poppins'), sans-serif;
   --font-serif: var(--font-playfair, 'Playfair Display'), serif;
-  --font-display: var(--font-bebas, 'Bebas Neue'), sans-serif;
+  --font-display: var(--font-playfair, 'Playfair Display'), Georgia, serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 body {
   background: var(--bg);
@@ -71,8 +82,8 @@ li { margin-bottom: 0.3rem; }
   font-family: var(--font-display);
   font-size: clamp(2.4rem, 5vw, 3.8rem);
   color: var(--yellow);
-  letter-spacing: 0.06em;
-  font-weight: 400;
+  letter-spacing: -0.025em;
+  font-weight: 600;
   margin-bottom: 0.4rem;
 }
 

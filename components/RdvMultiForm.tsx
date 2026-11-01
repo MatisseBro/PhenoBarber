@@ -7,92 +7,37 @@ import Link from 'next/link'
 /* ────────────────────────────────────────────
    DATA
 ──────────────────────────────────────────── */
-type Cat = 'homme' | 'femme' | 'enfant'
-
-interface Svc {
-  id: string
-  label: string
-  price: number
-  dur: number
-  hasSub?: boolean
-  from?: boolean
-  wa?: boolean
-}
-
-const SVCS: Record<Cat, Svc[]> = {
-  homme: [
-    { id: 'degrade',       label: 'Dégradé',                                    price: 25, dur: 30, hasSub: true },
-    { id: 'coupe-barbe-r', label: 'Coupe + barbe rapide',                       price: 30, dur: 45 },
-    { id: 'coupe-barbe-c', label: 'Coupe + barbe complète',                     price: 35, dur: 60 },
-    { id: 'buzz',          label: 'Buzz Cut',                                    price: 25, dur: 25 },
-    { id: 'waves',         label: 'Waves',                                       price: 30, dur: 60,  from: true },
-    { id: 'forfait-soin',  label: 'Forfait complet — Coupe + shampoing + coiffage', price: 45, dur: 60, from: true },
-    { id: 'forfait-curly', label: 'Forfait Curly / Boucles',                    price: 55, dur: 75,  from: true },
-    { id: 'color-caramel', label: 'Highlights / Mèches',                        price: 45, dur: 90,  from: true, wa: true },
-    { id: 'coloration',    label: 'Coloration totale',                           price: 50, dur: 90,  from: true, wa: true },
-    { id: 'decoloration',  label: 'Blanc polaire / Décoloration',               price: 80, dur: 120, from: true, wa: true },
-    { id: 'tresses-h',     label: 'Tresses plaquées',                           price: 30, dur: 90,  from: true, wa: true },
-    { id: 'produits-h',    label: 'Apportez vos produits',                      price: 25, dur: 45,  from: true },
-    { id: 'autre-h',       label: 'Autre — sur devis',                          price: 0,  dur: 0,   wa: true },
-  ],
-  femme: [
-    { id: 'big-chop',       label: 'Big Chop',                                         price: 35, dur: 45 },
-    { id: 'buzz-f',         label: 'Buzz Cut classique',                               price: 25, dur: 25 },
-    { id: 'big-chop-s',     label: 'Big Chop + shampoing + coupe',                    price: 55, dur: 75 },
-    { id: 'forfait-f',      label: 'Forfait complet — Coupe + shampoing + soin + coiffage', price: 55, dur: 75, from: true },
-    { id: 'forfait-f-curl', label: 'Forfait Curly / Boucles',                         price: 65, dur: 90,  from: true },
-    { id: 'color-f',        label: 'Highlights / Mèches',                             price: 55, dur: 90,  from: true, wa: true },
-    { id: 'blond-patine',   label: 'Blond avec patine',                               price: 85, dur: 120, from: true, wa: true },
-    { id: 'blanc-polaire-f',label: 'Blanc polaire / Décoloration',                    price: 95, dur: 150, from: true, wa: true },
-    { id: 'tresses-f',      label: 'Tresses plaquées',                                price: 30, dur: 90,  from: true, wa: true },
-    { id: 'produits-f',     label: 'Apportez vos produits',                           price: 25, dur: 45,  from: true },
-    { id: 'autre-f',        label: 'Autre — sur devis',                               price: 0,  dur: 0,   wa: true },
-  ],
-  enfant: [
-    { id: 'coupe-e',   label: 'Coupe enfant — moins de 15 ans', price: 15, dur: 25 },
-    { id: 'degrade-e', label: 'Dégradé enfant',                 price: 20, dur: 30 },
-    { id: 'tresses-e', label: 'Tresses plaquées',               price: 30, dur: 60, from: true, wa: true },
-    { id: 'autre-e',   label: 'Autre — sur demande',            price: 0,  dur: 0,  wa: true },
-  ],
-}
-
-const DEGS = [
-  { id: 'uniforme',  label: 'Coupe simple / uniforme', desc: 'Même longueur partout, contours propres' },
-  { id: 'classique', label: 'Dégradé classique',       desc: 'Dégradé simple et naturel' },
-  { id: 'skin',      label: 'Skin fade',               desc: 'Dégradé descendant à blanc — low, mid ou high' },
-  { id: 'taper',     label: 'Taper / tempes-nuque',    desc: 'Dégradé léger aux tempes et nuque' },
-  { id: 'low',       label: 'Low fade',                desc: 'Dégradé bas' },
-  { id: 'mid',       label: 'Mid fade',                desc: 'Dégradé moyen' },
-  { id: 'high',      label: 'High fade',               desc: 'Dégradé haut' },
-  { id: 'burst',     label: 'Burst fade',              desc: "Dégradé arrondi autour de l'oreille" },
-  { id: 'hightop',   label: 'High top',                desc: 'Coupe afro haute structurée' },
-  { id: 'nsp',       label: 'À voir sur place',        desc: 'Conseil personnalisé au salon' },
-]
-
-interface Opt {
-  id: string
-  label: string
-  price: number
-  dur: number
-  cats: Cat[]
-}
-
-const OPTS: Opt[] = [
-  { id: 'sham',     label: 'Shampoing',                price: 10, dur: 10, cats: ['homme','femme','enfant'] },
-  { id: 'pointes',  label: 'Coupe des pointes',        price: 10, dur: 10, cats: ['femme'] },
-  { id: 'soin',     label: 'Soin / retour des boucles',price: 20, dur: 20, cats: ['homme','femme'] },
-  { id: 'twist',    label: 'Twist éponge',             price: 5,  dur: 10, cats: ['homme'] },
-  { id: 'design-s', label: 'Design simple',            price: 5,  dur: 5,  cats: ['homme'] },
-  { id: 'design-c', label: 'Design complexe',          price: 10, dur: 10, cats: ['homme'] },
-  { id: 'design-x', label: 'Design complet',           price: 25, dur: 20, cats: ['homme'] },
-  { id: 'sc',       label: 'Shampoing + coiffage',     price: 15, dur: 20, cats: ['femme'] },
-  { id: 'ssc',      label: 'Shampoing + soin + coiffage', price: 25, dur: 30, cats: ['femme'] },
-  { id: 'contour',  label: 'Contour + dégradé barbe',  price: 8,  dur: 10, cats: ['homme'] },
-]
-
+import { SVCS, DEGS, OPTS, FIDELE_PRIX, type Cat } from '@/lib/rdv-catalog'
+import { minimumBookingDateTime } from '@/lib/booking-time'
 const SLOTS = ['10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','16:00','16:30','17:00','17:30']
 const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
-const CAT_LABELS: Record<Cat, string> = { homme: 'Homme', femme: 'Femme', enfant: 'Enfant -15 ans' }
+const CAT_LABELS: Record<Cat, string> = { homme: 'Homme', femme: 'Femme', enfant: 'Enfant 2–16 ans' }
+const LENGTHS = [
+  { id: 'tres-courts', label: 'Très courts' },
+  { id: 'courts', label: 'Courts' },
+  { id: 'mi-longs', label: 'Mi-longs' },
+  { id: 'longs', label: 'Longs' },
+  { id: 'tres-longs', label: 'Très longs' },
+]
+const OBJECTIVES = [
+  { id: 'conserver', label: 'Conserver la longueur' },
+  { id: 'raccourcir', label: 'Raccourcir' },
+  { id: 'pointes', label: 'Couper les pointes' },
+  { id: 'restructurer', label: 'Restructurer la coupe' },
+  { id: 'sur-place', label: 'À voir sur place' },
+]
+const NATURES = [
+  { id: 'lisses', label: 'Lisses' }, { id: 'ondules', label: 'Ondulés' },
+  { id: 'boucles', label: 'Bouclés' }, { id: 'frises', label: 'Frisés' },
+  { id: 'crepus', label: 'Crépus' }, { id: 'tresses', label: 'Tresses' },
+  { id: 'attaches', label: 'Attachés' }, { id: 'locks-courts', label: 'Locks courtes' },
+  { id: 'locks-longs', label: 'Locks longues' },
+]
+const HAIR_STATES = [
+  { id: 'demeles', label: 'Démêlés' }, { id: 'ademeler', label: 'À démêler (+5 € minimum)' },
+  { id: 'pas-demelage', label: 'Pas de démêlage nécessaire' }, { id: 'secs', label: 'Secs / déshydratés' },
+  { id: 'soin', label: 'Besoin d’un soin' }, { id: 'nsp', label: 'Je ne sais pas' },
+]
 
 function fmtD(m: number) {
   if (m <= 0) return ''
@@ -142,6 +87,11 @@ export default function RdvMultiForm() {
   const [svcId, setSvcId] = useState<string | null>(null)
   const [degId, setDegId] = useState<string | null>(null)
   const [opts, setOpts] = useState<string[]>([])
+  const [lon, setLon] = useState('')
+  const [obj, setObj] = useState('')
+  const [nature, setNature] = useState('')
+  const [etats, setEtats] = useState<string[]>([])
+  const [message, setMessage] = useState('')
   const [calY, setCalY] = useState(() => new Date().getFullYear())
   const [calM, setCalM] = useState(() => new Date().getMonth())
   const [date, setDate] = useState<string | null>(null)
@@ -149,6 +99,7 @@ export default function RdvMultiForm() {
   const [nom, setNom] = useState('')
   const [tel, setTel] = useState('')
   const [email, setEmail] = useState('')
+  const [marketingConsent, setMarketingConsent] = useState(false)
   const [step, setStep] = useState(1)
   const [bookedSlots, setBookedSlots] = useState<{ slot: string; duration: number }[]>([])
   const [submitting, setSubmitting] = useState(false)
@@ -159,19 +110,23 @@ export default function RdvMultiForm() {
   const [activeSlots, setActiveSlots] = useState<string[]>(SLOTS)
   const [closedDates, setClosedDates] = useState<string[]>([])
   const [manualBlocks, setManualBlocks] = useState<{ date: string; slot: string }[]>([])
+  const [minimumBookingStart, setMinimumBookingStart] = useState<string | null>(null)
+  const [minimumLeadMinutes, setMinimumLeadMinutes] = useState(60)
+  const [slotAvailabilityLoaded, setSlotAvailabilityLoaded] = useState(false)
+  const [bookingClock, setBookingClock] = useState(() => Date.now())
 
   const svc = useMemo(() => cat ? SVCS[cat].find(s => s.id === svcId) ?? null : null, [cat, svcId])
 
-  /* steps: 1=cat 2=svc 3=deg(if hasSub) 4=opts 5=recap 6=cal 7=coords 8=confirm */
+  /* steps: 1=cat 2=svc 3=deg(if needed) 4=hair 5=opts 6=recap 7=cal 8=coords 9=confirm */
   const hasDegStep = svc?.hasSub === true
-  const totalDisplaySteps = hasDegStep ? 7 : 6
+  const totalDisplaySteps = hasDegStep ? 8 : 7
 
   function displayStep(s: number) {
     if (!hasDegStep && s >= 3) return s - 1
     return s
   }
 
-  const basePrice = svc?.price ?? 0
+  const basePrice = svc ? (clientKnown && FIDELE_PRIX[svc.id] !== undefined ? FIDELE_PRIX[svc.id] : svc.price) : 0
   const baseDur = svc?.dur ?? 0
   const extraPrice = opts.reduce((acc, id) => {
     const o = OPTS.find(o => o.id === id)
@@ -181,25 +136,37 @@ export default function RdvMultiForm() {
     const o = OPTS.find(o => o.id === id)
     return acc + (o?.dur ?? 0)
   }, 0)
-  const totalPrice = basePrice + extraPrice
-  const totalDur = baseDur + extraDur
+  const detangleExtra = etats.includes('ademeler') ? 5 : 0
+  const totalPrice = basePrice + extraPrice + detangleExtra
+  const totalDur = baseDur + extraDur + (etats.includes('ademeler') ? 5 : 0)
+  const objectiveRequired = ['mi-longs', 'longs', 'tres-longs'].includes(lon)
+  const hairComplete = Boolean(lon && nature && etats.length > 0 && (!objectiveRequired || obj))
 
   function toggleOpt(id: string) {
     setOpts(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
   }
 
-  /* ── Restore form state on mount (sessionStorage > localStorage) ── */
+  function toggleHairState(id: string) {
+    setEtats(prev => prev.includes(id) ? prev.filter(value => value !== id) : [...prev, id])
+  }
+
+  /* ── Restore form state and identity for the current browser tab ── */
   useEffect(() => {
     let sessionRestored = false
     try {
       const saved = sessionStorage.getItem('rdv_form')
       if (saved) {
         const s = JSON.parse(saved)
-        if (s.step && s.step < 8) {
+        if (s.step && s.step < 9) {
           if (s.cat) setCat(s.cat)
           if (s.svcId) setSvcId(s.svcId)
           if (s.degId) setDegId(s.degId)
           if (Array.isArray(s.opts)) setOpts(s.opts)
+          if (s.lon) setLon(s.lon)
+          if (s.obj) setObj(s.obj)
+          if (s.nature) setNature(s.nature)
+          if (Array.isArray(s.etats)) setEtats(s.etats)
+          if (s.message) setMessage(s.message)
           if (s.date) setDate(s.date)
           if (s.slot) setSlot(s.slot)
           if (s.nom) setNom(s.nom)
@@ -214,31 +181,53 @@ export default function RdvMultiForm() {
     } catch {}
     if (!sessionRestored) {
       try {
-        const saved = localStorage.getItem('rdv_user')
+        const saved = sessionStorage.getItem('rdv_user')
         if (saved) {
-          const u = JSON.parse(saved)
-          if (u.nom) setNom(u.nom)
-          if (u.tel) setTel(u.tel)
-          if (u.email) setEmail(u.email)
+          const stored = JSON.parse(saved)
+          if (typeof stored.expiresAt !== 'number' || stored.expiresAt <= Date.now()) {
+            sessionStorage.removeItem('rdv_user')
+          } else {
+            const u = stored.data ?? {}
+            if (u.nom) setNom(u.nom)
+            if (u.tel) setTel(u.tel)
+            if (u.email) setEmail(u.email)
+          }
         }
       } catch {}
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Supprime l’ancienne copie persistante utilisée par les versions précédentes.
+    try { localStorage.removeItem('rdv_user') } catch {}
   }, [])
 
-  /* ── Persist user identity to localStorage ── */
+  /* ── Keep user identity only for the current tab, for at most eight hours ── */
   useEffect(() => {
     if (!nom && !tel && !email) return
-    try { localStorage.setItem('rdv_user', JSON.stringify({ nom, tel, email })) } catch {}
+    try {
+      sessionStorage.setItem('rdv_user', JSON.stringify({
+        expiresAt: Date.now() + 8 * 60 * 60 * 1000,
+        data: { nom, tel, email },
+      }))
+    } catch {}
   }, [nom, tel, email])
 
   /* ── Persist form state to sessionStorage ── */
   useEffect(() => {
-    if (step === 8) { sessionStorage.removeItem('rdv_form'); return }
+    if (step === 9) { sessionStorage.removeItem('rdv_form'); return }
     try {
-      sessionStorage.setItem('rdv_form', JSON.stringify({ step, cat, svcId, degId, opts, date, slot, nom, tel, email, calY, calM }))
+      sessionStorage.setItem('rdv_form', JSON.stringify({ step, cat, svcId, degId, opts, lon, obj, nature, etats, message, date, slot, nom, tel, email, calY, calM }))
     } catch {}
-  }, [step, cat, svcId, degId, opts, date, slot, nom, tel, email, calY, calM])
+  }, [step, cat, svcId, degId, opts, lon, obj, nature, etats, message, date, slot, nom, tel, email, calY, calM])
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const title = document.querySelector<HTMLElement>('.rdv-card-title')
+      if (title) {
+        title.tabIndex = -1
+        title.focus()
+      }
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [step])
 
   /* ── Fetch schedule config on mount ── */
   useEffect(() => {
@@ -256,11 +245,36 @@ export default function RdvMultiForm() {
 
   /* ── Fetch booked slots when date changes ── */
   useEffect(() => {
-    if (!date) { setBookedSlots([]); return }
-    fetch(`/api/rdv/slots?date=${date}`)
-      .then(r => r.ok ? r.json() : { bookings: [] })
-      .then(d => setBookedSlots(d.bookings ?? []))
-      .catch(() => setBookedSlots([]))
+    if (!date) {
+      setBookedSlots([])
+      setMinimumBookingStart(null)
+      setSlotAvailabilityLoaded(false)
+      return
+    }
+    const controller = new AbortController()
+    setSlotAvailabilityLoaded(false)
+    fetch(`/api/rdv/slots?date=${date}`, { signal: controller.signal })
+      .then(r => r.ok ? r.json() : Promise.reject(new Error('slots unavailable')))
+      .then(d => {
+        setBookedSlots(d.bookings ?? [])
+        setMinimumBookingStart(typeof d.minimumBookingDateTime === 'string' ? d.minimumBookingDateTime : null)
+        setMinimumLeadMinutes(Number.isInteger(d.minLeadMinutes) ? d.minLeadMinutes : 60)
+        setSlotAvailabilityLoaded(typeof d.minimumBookingDateTime === 'string')
+      })
+      .catch(error => {
+        if (error instanceof DOMException && error.name === 'AbortError') return
+        setBookedSlots([])
+        setMinimumBookingStart(null)
+        setSlotAvailabilityLoaded(false)
+      })
+    return () => controller.abort()
+  }, [date])
+
+  useEffect(() => {
+    if (!date) return
+    setBookingClock(Date.now())
+    const timer = window.setInterval(() => setBookingClock(Date.now()), 30_000)
+    return () => window.clearInterval(timer)
   }, [date])
 
   /* ── Slot availability ── */
@@ -278,6 +292,13 @@ export default function RdvMultiForm() {
     })
   }
 
+  function isSlotTooSoon(s: string) {
+    if (!date || !minimumBookingStart) return false
+    const currentMinimum = minimumBookingDateTime(new Date(bookingClock), minimumLeadMinutes)
+    const effectiveMinimum = currentMinimum > minimumBookingStart ? currentMinimum : minimumBookingStart
+    return `${date}T${s}` < effectiveMinimum
+  }
+
   /* ── Submit reservation ── */
   async function handleSubmit() {
     if (!cat || !svcId || !svc || !date || !slot) return
@@ -285,6 +306,13 @@ export default function RdvMultiForm() {
     setSubmitError(false)
     const deg = degId ? DEGS.find(d => d.id === degId) : null
     const selectedOpts = opts.map(id => OPTS.find(o => o.id === id)).filter(Boolean) as typeof OPTS
+    const hairNotes = [
+      `Longueur : ${LENGTHS.find(item => item.id === lon)?.label ?? lon}`,
+      obj ? `Objectif : ${OBJECTIVES.find(item => item.id === obj)?.label ?? obj}` : '',
+      `Nature : ${NATURES.find(item => item.id === nature)?.label ?? nature}`,
+      `État : ${etats.map(id => HAIR_STATES.find(item => item.id === id)?.label ?? id).join(', ')}`,
+      message.trim() ? `Message : ${message.trim()}` : '',
+    ].filter(Boolean).join('\n')
     const booking = {
       nom: nom.trim(),
       email: email.trim(),
@@ -296,10 +324,13 @@ export default function RdvMultiForm() {
       degradeLabel: deg?.label ?? undefined,
       options: selectedOpts.map(o => o.id),
       optionsLabels: selectedOpts.map(o => o.label),
+      hairStates: etats,
       totalPrice,
       totalDuration: totalDur,
       date,
       slot,
+      notes: hairNotes,
+      marketingConsent,
     }
     try {
       const res = await fetch('/api/rdv', {
@@ -309,14 +340,14 @@ export default function RdvMultiForm() {
       })
       if (res.status === 409) {
         setSlot(null)
-        setStep(6)
+        setStep(7)
         return
       }
       if (!res.ok) throw new Error()
 
       const json = await res.json().catch(() => ({}))
       setEmailError(json.emailSent === false)
-      setStep(8)
+      setStep(9)
     } catch {
       setSubmitError(true)
     } finally {
@@ -362,7 +393,7 @@ export default function RdvMultiForm() {
     const start = date.replace(/-/g, '') + 'T' + pad(hh) + pad(mm) + '00'
     const endDate = new Date(calY, calM, parseInt(date.split('-')[2]), hh, mm + dur)
     const end = `${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`
-    const title = encodeURIComponent(`RDV PHENO&CO — ${svc?.label ?? ''}`)
+    const title = encodeURIComponent(`RDV PHENO&CO - ${svc?.label ?? ''}`)
     const loc = encodeURIComponent('18 Rue d\'Alger, 34000 Montpellier')
     return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&location=${loc}`
   }
@@ -388,7 +419,7 @@ export default function RdvMultiForm() {
   const filteredOpts = cat ? OPTS.filter(o => o.cats.includes(cat)) : []
   const calDays = buildCalDays()
 
-  const progPct = step >= 8 ? 100 : Math.round((displayStep(step) / totalDisplaySteps) * 100)
+  const progPct = step >= 9 ? 100 : Math.round((displayStep(step) / totalDisplaySteps) * 100)
 
   return (
     <div className="rdv-wrap">
@@ -399,7 +430,7 @@ export default function RdvMultiForm() {
 
       {/* Top bar */}
       <div className="rdv-top">
-        {step > 1 && step < 8 ? (
+        {step > 1 && step < 9 ? (
           <button className="rdv-back-btn" onClick={goBack}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -411,7 +442,7 @@ export default function RdvMultiForm() {
         )}
         <Link href="/" className="rdv-top-brand">PHENO&CO</Link>
         <div className="rdv-top-right">
-          {step < 8 && (
+          {step < 9 && (
             <Link href="/" className="rdv-quit-btn">Quitter</Link>
           )}
         </div>
@@ -422,8 +453,8 @@ export default function RdvMultiForm() {
         <span className="rdv-sh-sub">BARBERSHOP MONTPELLIER</span>
       </div>
 
-      {/* Step indicator (steps 1-7, not on confirm) */}
-      {step < 8 && (
+      {/* Step indicator (not on confirmation) */}
+      {step < 9 && (
         <StepIndicator
           current={displayStep(step)}
           total={totalDisplaySteps}
@@ -441,12 +472,18 @@ export default function RdvMultiForm() {
                 {([
                   { id: 'homme',  label: 'Homme',  desc: 'Coupe, barbe, dégradé', img: '/rdv-homme.png'  },
                   { id: 'femme',  label: 'Femme',  desc: 'Big Chop, couleur',     img: '/rdv-femme.png'  },
-                  { id: 'enfant', label: 'Enfant', desc: 'Moins de 15 ans',       img: '/rdv-enfant.png' },
+                  { id: 'enfant', label: 'Enfant', desc: 'De 2 à 16 ans',         img: '/rdv-enfant.png' },
                 ] as { id: Cat; label: string; desc: string; img: string }[]).map(c => (
                   <div
                     key={c.id}
                     className={`rdv-cat-card ${cat === c.id ? 'sel' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={cat === c.id}
                     onClick={() => setCat(c.id)}
+                    onKeyDown={event => {
+                      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setCat(c.id) }
+                    }}
                   >
                     <Image
                       src={c.img}
@@ -487,7 +524,10 @@ export default function RdvMultiForm() {
                   <button
                     key={s.id}
                     className={`rdv-cbtn-svc ${svcId === s.id ? 'sel' : ''}`}
-                    onClick={() => { setSvcId(s.id); setDegId(null); setOpts([]) }}
+                    onClick={() => {
+                      setSvcId(s.id); setDegId(null); setOpts([])
+                      setLon(''); setObj(''); setNature(''); setEtats([])
+                    }}
                   >
                     <div className="rdv-svc-name">{s.label}</div>
                     <div className="rdv-svc-price">
@@ -593,8 +633,88 @@ export default function RdvMultiForm() {
         </>
       )}
 
-      {/* ── STEP 4 : OPTIONS ── */}
+      {/* ── STEP 4 : CHEVEUX ── */}
       {step === 4 && (
+        <>
+          <div className="rdv-main-wide">
+            <div className="rdv-card">
+              <div className="rdv-card-title">Parlons de vos cheveux</div>
+              <div className="rdv-card-sub">Ces quelques précisions nous permettent de prévoir le bon temps et de vous conseiller au mieux.</div>
+
+              <div className="rdv-hair-group">
+                <div className="rdv-sec-lbl">Quelle est votre longueur actuelle ?</div>
+                <div className="rdv-hair-grid rdv-hair-grid-5">
+                  {LENGTHS.map(item => (
+                    <button key={item.id} type="button" className={`rdv-hair-choice${lon === item.id ? ' sel' : ''}`} onClick={() => { setLon(item.id); if (!['mi-longs', 'longs', 'tres-longs'].includes(item.id)) setObj('') }}>
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {objectiveRequired && (
+                <div className="rdv-hair-group">
+                  <div className="rdv-sec-lbl">Quel est votre objectif ?</div>
+                  <div className="rdv-hair-grid">
+                    {OBJECTIVES.map(item => (
+                      <button key={item.id} type="button" className={`rdv-hair-choice${obj === item.id ? ' sel' : ''}`} onClick={() => setObj(item.id)}>
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="rdv-hair-group">
+                <div className="rdv-sec-lbl">Quelle est la nature de vos cheveux ?</div>
+                <div className="rdv-hair-grid rdv-hair-grid-3">
+                  {NATURES.map(item => (
+                    <button key={item.id} type="button" className={`rdv-hair-choice${nature === item.id ? ' sel' : ''}`} onClick={() => setNature(item.id)}>
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rdv-hair-group">
+                <div className="rdv-sec-lbl">Dans quel état sont-ils aujourd&apos;hui ?</div>
+                <div className="rdv-hair-grid rdv-hair-grid-3">
+                  {HAIR_STATES.map(item => (
+                    <button key={item.id} type="button" className={`rdv-hair-choice rdv-hair-multi${etats.includes(item.id) ? ' sel' : ''}`} onClick={() => toggleHairState(item.id)}>
+                      <span className="rdv-hair-check" aria-hidden="true">{etats.includes(item.id) ? '✓' : ''}</span>
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {['ondules', 'boucles', 'frises'].includes(nature) && (
+                <div className="rdv-hair-tip">
+                  <strong>Conseil boucles</strong>
+                  Pour un résultat optimal, le forfait Curly / Boucles permet de travailler la forme, le soin et la définition.
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="rdv-sticky rdv-sticky-wide">
+            <div className="rdv-sticky-in">
+              {etats.includes('ademeler') && (
+                <div className="rdv-price-bar">
+                  <div><div className="rdv-pb-lbl">Supplément démêlage</div><div className="rdv-pb-tot">+5 € minimum</div></div>
+                  <div className="rdv-pb-dur">+5 min</div>
+                </div>
+              )}
+              <div className="rdv-nav-btns">
+                <button className="rdv-btn-back" onClick={goBack}>← Retour</button>
+                <button className="rdv-btn-next" disabled={!hairComplete} onClick={() => setStep(5)}>Continuer →</button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ── STEP 5 : OPTIONS ── */}
+      {step === 5 && (
         <>
           <div className="rdv-main-wide">
             <div className="rdv-card">
@@ -610,7 +730,13 @@ export default function RdvMultiForm() {
                     <div
                       key={o.id}
                       className={`rdv-opt-grid-row ${sel ? 'sel' : ''}`}
+                      role="checkbox"
+                      tabIndex={0}
+                      aria-checked={sel}
                       onClick={() => toggleOpt(o.id)}
+                      onKeyDown={event => {
+                        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleOpt(o.id) }
+                      }}
                     >
                       <div className="rdv-opt-grid-info">
                         <div className="rdv-opt-grid-name">{o.label}</div>
@@ -634,7 +760,7 @@ export default function RdvMultiForm() {
               </div>
               <div className="rdv-nav-btns">
                 <button className="rdv-btn-back" onClick={goBack}>← Retour</button>
-                <button className="rdv-btn-next" onClick={() => setStep(5)}>
+                <button className="rdv-btn-next" onClick={() => setStep(6)}>
                   Récapitulatif →
                 </button>
               </div>
@@ -643,8 +769,8 @@ export default function RdvMultiForm() {
         </>
       )}
 
-      {/* ── STEP 5 : RÉCAP ── */}
-      {step === 5 && (
+      {/* ── STEP 6 : RÉCAP ── */}
+      {step === 6 && (
         <>
           <div className="rdv-main">
             <div className="rdv-card">
@@ -664,6 +790,22 @@ export default function RdvMultiForm() {
                   <span className="rdv-rl-v">{DEGS.find(d => d.id === degId)?.label ?? '--'}</span>
                 </div>
               )}
+              <div className="rdv-rl">
+                <span className="rdv-rl-k">Cheveux</span>
+                <span className="rdv-rl-v">
+                  {LENGTHS.find(item => item.id === lon)?.label} · {NATURES.find(item => item.id === nature)?.label}
+                </span>
+              </div>
+              {obj && (
+                <div className="rdv-rl">
+                  <span className="rdv-rl-k">Objectif</span>
+                  <span className="rdv-rl-v">{OBJECTIVES.find(item => item.id === obj)?.label}</span>
+                </div>
+              )}
+              <div className="rdv-rl">
+                <span className="rdv-rl-k">État</span>
+                <span className="rdv-rl-v">{etats.map(id => HAIR_STATES.find(item => item.id === id)?.label).filter(Boolean).join(', ')}</span>
+              </div>
               {opts.length > 0 && (
                 <div className="rdv-rl">
                   <span className="rdv-rl-k">Options</span>
@@ -687,7 +829,7 @@ export default function RdvMultiForm() {
             <div className="rdv-sticky-in">
               <div className="rdv-nav-btns">
                 <button className="rdv-btn-back" onClick={goBack}>← Modifier</button>
-                <button className="rdv-btn-next" onClick={() => setStep(6)}>
+                <button className="rdv-btn-next" onClick={() => setStep(7)}>
                   Choisir un créneau →
                 </button>
               </div>
@@ -696,8 +838,8 @@ export default function RdvMultiForm() {
         </>
       )}
 
-      {/* ── STEP 6 : CALENDRIER ── */}
-      {step === 6 && (
+      {/* ── STEP 7 : CALENDRIER ── */}
+      {step === 7 && (
         <>
           <div className="rdv-main">
             <div className="rdv-card">
@@ -706,9 +848,9 @@ export default function RdvMultiForm() {
 
               {/* Calendar nav */}
               <div className="rdv-cal-nav">
-                <button className="rdv-cal-nav-btn" onClick={prevM}>‹</button>
+                <button className="rdv-cal-nav-btn" onClick={prevM} aria-label="Mois précédent">‹</button>
                 <div className="rdv-cal-month">{MONTHS[calM]} {calY}</div>
-                <button className="rdv-cal-nav-btn" onClick={nextM}>›</button>
+                <button className="rdv-cal-nav-btn" onClick={nextM} aria-label="Mois suivant">›</button>
               </div>
 
               {/* Day headers */}
@@ -720,10 +862,22 @@ export default function RdvMultiForm() {
                   <div
                     key={i}
                     className={day.cls}
+                    role={day.n ? 'button' : undefined}
+                    tabIndex={day.n && (day.cls.includes('avail') || day.cls.includes('csel')) ? 0 : -1}
+                    aria-label={day.n ? `${day.n} ${MONTHS[calM]} ${calY}` : undefined}
+                    aria-pressed={day.n ? day.ds === date : undefined}
+                    aria-disabled={day.n ? !(day.cls.includes('avail') || day.cls.includes('csel')) : undefined}
                     onClick={() => {
                       if (!day.cls.includes('avail') && !day.cls.includes('csel')) return
                       setDate(day.ds)
                       setSlot(null)
+                    }}
+                    onKeyDown={event => {
+                      if ((event.key === 'Enter' || event.key === ' ') && (day.cls.includes('avail') || day.cls.includes('csel'))) {
+                        event.preventDefault()
+                        setDate(day.ds)
+                        setSlot(null)
+                      }
                     }}
                   >
                     {day.n || ''}
@@ -738,7 +892,8 @@ export default function RdvMultiForm() {
                   <div className="rdv-slots-grid">
                     {activeSlots.map(s => {
                       const manuallyBlocked = manualBlocks.some(b => b.date === date && b.slot === s)
-                      const booked = manuallyBlocked || isSlotBooked(s)
+                      const tooSoon = isSlotTooSoon(s)
+                      const booked = !slotAvailabilityLoaded || manuallyBlocked || isSlotBooked(s) || tooSoon
                       return (
                         <button
                           key={s}
@@ -746,7 +901,7 @@ export default function RdvMultiForm() {
                           disabled={booked}
                           onClick={() => !booked && setSlot(s)}
                         >
-                          {booked ? <span style={{ fontSize: '.7rem', opacity: .6 }}>Complet</span> : s}
+                          {booked ? <span style={{ fontSize: '.7rem', opacity: .6 }}>{!slotAvailabilityLoaded ? 'Indisponible' : tooSoon ? 'Délai dépassé' : 'Complet'}</span> : s}
                         </button>
                       )
                     })}
@@ -760,7 +915,7 @@ export default function RdvMultiForm() {
             <div className="rdv-sticky-in">
               <div className="rdv-nav-btns">
                 <button className="rdv-btn-back" onClick={goBack}>← Retour</button>
-                <button className="rdv-btn-next" disabled={!date || !slot} onClick={() => setStep(7)}>
+                <button className="rdv-btn-next" disabled={!date || !slot} onClick={() => setStep(8)}>
                   Confirmer ce créneau →
                 </button>
               </div>
@@ -769,46 +924,23 @@ export default function RdvMultiForm() {
         </>
       )}
 
-      {/* ── STEP 7 : COORDONNÉES ── */}
-      {step === 7 && (
+      {/* ── STEP 8 : COORDONNÉES ── */}
+      {step === 8 && (
         <>
           <div className="rdv-main">
             <div className="rdv-card">
               <div className="rdv-card-title">Vos coordonnées</div>
               <div className="rdv-card-sub">Pour recevoir votre confirmation par e-mail et SMS.</div>
               {clientKnown && (
-                <div style={{ background: 'rgba(253,224,71,.08)', border: '1px solid rgba(253,224,71,.3)', borderRadius: '8px', padding: '10px 14px', marginBottom: '16px', fontSize: '13px', color: 'rgba(255,255,255,.75)' }}>
-                  👋 Bienvenue, on vous reconnaît ! Vos infos ont été pré-remplies.
+                <div className="rdv-loyalty">
+                  <strong>Bon retour chez PHENO&amp;CO !</strong>
+                  Votre fiche client a été reconnue{svc && FIDELE_PRIX[svc.id] !== undefined ? ' et votre tarif fidélité est appliqué.' : '.'}
                 </div>
               )}
               <div className="rdv-fg">
-                <label className="rdv-flbl">Adresse e-mail</label>
+                <label className="rdv-flbl" htmlFor="rdv-name">Nom et prénom</label>
                 <input
-                  className="rdv-finput"
-                  type="email"
-                  placeholder="exemple@mail.com"
-                  value={email}
-                  onChange={e => { setEmail(e.target.value); setClientKnown(false) }}
-                  onBlur={async e => {
-                    const val = e.target.value.trim()
-                    if (!val.includes('@')) return
-                    try {
-                      const res = await fetch(`/api/clients/lookup?q=${encodeURIComponent(val)}`)
-                      if (res.ok) {
-                        const c = await res.json()
-                        if (c) {
-                          if (!nom) setNom(c.nom)
-                          if (!tel) setTel(c.telephone ?? '')
-                          setClientKnown(true)
-                        }
-                      }
-                    } catch {}
-                  }}
-                />
-              </div>
-              <div className="rdv-fg">
-                <label className="rdv-flbl">Nom et prénom</label>
-                <input
+                  id="rdv-name"
                   className="rdv-finput"
                   type="text"
                   placeholder="Ex : Jean Dupont"
@@ -817,21 +949,70 @@ export default function RdvMultiForm() {
                 />
               </div>
               <div className="rdv-fg">
-                <label className="rdv-flbl">Téléphone / WhatsApp</label>
+                <label className="rdv-flbl" htmlFor="rdv-phone">Téléphone / WhatsApp</label>
                 <input
+                  id="rdv-phone"
                   className="rdv-finput"
                   type="tel"
                   placeholder="06 00 00 00 00"
                   value={tel}
-                  onChange={e => setTel(e.target.value)}
+                  onChange={e => { setTel(e.target.value); setClientKnown(false) }}
                 />
+              </div>
+              <div className="rdv-fg">
+                <label className="rdv-flbl" htmlFor="rdv-email">Adresse e-mail</label>
+                <input
+                  id="rdv-email"
+                  className="rdv-finput"
+                  type="email"
+                  placeholder="exemple@mail.com"
+                  value={email}
+                  onChange={e => { setEmail(e.target.value); setClientKnown(false) }}
+                  onBlur={async e => {
+                    if (!e.target.value.includes('@') || tel.replace(/\D/g, '').length < 8) return
+                    try {
+                      const res = await fetch('/api/clients/lookup', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: e.target.value, telephone: tel }),
+                      })
+                      if (res.ok) {
+                        const client = await res.json()
+                        setClientKnown(client?.loyaltyEligible === true)
+                      }
+                    } catch {}
+                  }}
+                />
+              </div>
+              <div className="rdv-fg">
+                <label className="rdv-flbl" htmlFor="rdv-message">Message (facultatif)</label>
+                <textarea
+                  id="rdv-message"
+                  className="rdv-finput rdv-ftextarea"
+                  placeholder="Une précision pour votre rendez-vous…"
+                  maxLength={500}
+                  rows={4}
+                  value={message}
+                  onChange={e => setMessage(e.target.value)}
+                />
+                <span className="rdv-char-count">{message.length}/500</span>
+              </div>
+              <div className="rdv-fg">
+                <label className="rdv-flbl" style={{ display: 'flex', gap: '.6rem', alignItems: 'flex-start' }}>
+                  <input
+                    type="checkbox"
+                    checked={marketingConsent}
+                    onChange={event => setMarketingConsent(event.target.checked)}
+                  />
+                  <span>J&apos;accepte de recevoir occasionnellement les offres PHENO&amp;CO. Facultatif, révocable à tout moment.</span>
+                </label>
               </div>
             </div>
           </div>
           <div className="rdv-sticky">
             <div className="rdv-sticky-in">
               {submitError && (
-                <div style={{ color: '#f66', fontSize: '.8rem', textAlign: 'center', marginBottom: '.5rem' }}>
+                <div role="alert" style={{ color: '#f66', fontSize: '.8rem', textAlign: 'center', marginBottom: '.5rem' }}>
                   ⚠ Une erreur est survenue. Réessayez ou contactez-nous par WhatsApp.
                 </div>
               )}
@@ -850,8 +1031,8 @@ export default function RdvMultiForm() {
         </>
       )}
 
-      {/* ── STEP 8 : CONFIRMATION ── */}
-      {step === 8 && (
+      {/* ── STEP 9 : CONFIRMATION ── */}
+      {step === 9 && (
         <div className="rdv-main" style={{ paddingBottom: '2rem' }}>
           <div className="rdv-card" style={{ textAlign: 'center', padding: '2rem 1.4rem' }}>
             <div className="rdv-conf-icon">✓</div>
@@ -861,7 +1042,7 @@ export default function RdvMultiForm() {
               Bonjour <strong>{nom}</strong>,<br /><br />
               Votre rendez-vous du <strong>{dateLabel} à {slot}</strong> est confirmé.<br />
               {emailError
-                ? <>Un souci d&apos;envoi est survenu — contactez-nous par WhatsApp si besoin.</>
+                ? <>Un souci d&apos;envoi est survenu - contactez-nous par WhatsApp si besoin.</>
                 : <>Un e-mail de confirmation a été envoyé à <strong>{email}</strong>.</>
               }
             </div>
@@ -878,6 +1059,7 @@ export default function RdvMultiForm() {
                 style={{ background: 'rgba(201,168,76,.1)', borderColor: '#C9A84C', color: '#C9A84C', fontWeight: 700 }}
                 onClick={() => {
                   setCat(null); setSvcId(null); setDegId(null); setOpts([])
+                  setLon(''); setObj(''); setNature(''); setEtats([]); setMessage(''); setClientKnown(false)
                   setDate(null); setSlot(null); setNom(''); setTel(''); setEmail('')
                   setStep(1)
                 }}
@@ -888,7 +1070,7 @@ export default function RdvMultiForm() {
 
             <div className="rdv-conf-address">
               PHENO&CO Barbershop<br />
-              18 rue d&apos;Alger — Saint-Roch, Montpellier<br />
+              18 rue d&apos;Alger - Saint-Roch, Montpellier<br />
               07 69 43 26 05
             </div>
 

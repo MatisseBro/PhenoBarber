@@ -19,7 +19,9 @@ export function toRdvRow(b: RdvBooking): Record<string, unknown> {
     date:             b.date,
     slot:             b.slot,
     status:           b.status,
-    notes:            b.notes ?? null,
+    notes:            b.notes        ?? null,
+    group_id:         b.groupId      ?? null,
+    person_label:     b.personLabel  ?? null,
   }
 }
 
@@ -43,6 +45,8 @@ export function fromRdvRow(row: any): RdvBooking {
     date:           row.date,
     slot:           row.slot,
     status:         row.status as RdvStatus,
-    notes:          row.notes  ?? undefined,
+    notes:          row.notes        ?? undefined,
+    groupId:        row.group_id     ?? undefined,
+    personLabel:    row.person_label ?? undefined,
   }
 }

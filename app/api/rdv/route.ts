@@ -7,82 +7,90 @@ import { randomUUID } from 'crypto'
 import { sendRdvEmails } from '@/lib/email'
 import { sendRdvSmsClient } from '@/lib/sms'
 import { upsertClientRdv } from '@/lib/clients'
+import { isReturningClient } from '@/lib/clients'
 
 import { ALL_SLOTS } from '@/lib/schedule-types'
+import { checkRdvAvailability } from '@/lib/rdv-availability'
+import { resolveRdvSelection } from '@/lib/rdv-catalog'
+import { isIsoDate, normalizeEmail, normalizePersonName, normalizePhone } from '@/lib/validation'
+import { RequestBodyError, readJsonBody } from '@/lib/http'
+import { enforceRateLimit } from '@/lib/rate-limit'
+import { isBookingStartAllowed } from '@/lib/booking-time'
 
 const VALID_CATS = ['homme', 'femme', 'enfant'] as const
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const RATE_MAP = new Map<string, { count: number; reset: number }>()
-
-function rateLimit(ip: string, max = 5, windowMs = 60_000): boolean {
-  const now = Date.now()
-  const entry = RATE_MAP.get(ip)
-  if (!entry || now > entry.reset) {
-    RATE_MAP.set(ip, { count: 1, reset: now + windowMs })
-    return true
-  }
-  if (entry.count >= max) return false
-  entry.count++
-  return true
-}
-
 export async function POST(req: Request) {
   const contentLength = parseInt(req.headers.get('content-length') ?? '0', 10)
   if (contentLength > 16_384) {
     return NextResponse.json({ error: 'Requête trop grande' }, { status: 413 })
   }
 
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
-  if (!rateLimit(ip)) {
+  if (!await enforceRateLimit(req, { namespace: 'rdv-create', limit: 5, windowSeconds: 60 })) {
     return NextResponse.json({ error: 'Trop de requêtes' }, { status: 429 })
   }
 
-  let body: Partial<RdvBooking>
-  try { body = await req.json() } catch { return NextResponse.json({ error: 'Requête invalide' }, { status: 400 }) }
+  let body: Partial<RdvBooking> & { hairStates?: unknown; marketingConsent?: unknown }
+  try { body = await readJsonBody(req, 16_384) } catch (error) {
+    const status = error instanceof RequestBodyError ? error.status : 400
+    return NextResponse.json({ error: status === 413 ? 'Requête trop grande' : 'Requête invalide' }, { status })
+  }
 
   // Validation des champs obligatoires
-  const { nom, email, telephone, categorie, prestation, prestationLabel, date, slot, options = [], optionsLabels = [], totalPrice = 0, totalDuration = 0 } = body
+  const { nom, email, telephone, categorie, prestation, date, slot, options = [] } = body
+  const normalizedEmail = normalizeEmail(email)
+  const normalizedPhone = normalizePhone(telephone)
+  const normalizedName = normalizePersonName(nom)
 
   if (
-    typeof nom !== 'string' || nom.trim().length < 2 || nom.trim().length > 100 ||
-    typeof email !== 'string' || !EMAIL_RE.test(email) ||
-    typeof telephone !== 'string' || telephone.trim().length < 8 || telephone.trim().length > 20 ||
+    !normalizedName || !normalizedEmail || !normalizedPhone ||
     !VALID_CATS.includes(categorie as typeof VALID_CATS[number]) ||
     typeof prestation !== 'string' || prestation.length > 50 ||
-    typeof prestationLabel !== 'string' || prestationLabel.length > 100 ||
-    typeof date !== 'string' || !DATE_RE.test(date) ||
+    !isIsoDate(date) ||
     !ALL_SLOTS.includes(slot as string) ||
-    !Array.isArray(options) || !Array.isArray(optionsLabels) ||
-    typeof totalPrice !== 'number' || totalPrice < 0 || totalPrice > 5000 ||
-    typeof totalDuration !== 'number' || totalDuration < 0 || totalDuration > 480
+    !Array.isArray(options)
   ) {
     return NextResponse.json({ error: 'Données invalides' }, { status: 422 })
   }
 
-  // Vérifie que la date n'est pas dans le passé
-  if (new Date(date) < new Date(new Date().toISOString().slice(0, 10))) {
-    return NextResponse.json({ error: 'Date passée' }, { status: 422 })
+  if (!isBookingStartAllowed(date, slot as string)) {
+    return NextResponse.json({ error: 'Ce créneau est passé ou trop proche. Choisissez une heure ultérieure.' }, { status: 422 })
   }
 
-  // ID généré côté serveur
+  const loyal = await isReturningClient(normalizedEmail, normalizedPhone).catch(() => false)
+  const selection = resolveRdvSelection({
+    categorie,
+    prestation,
+    degrade: body.degrade,
+    options,
+    detangling: Array.isArray(body.hairStates) && body.hairStates.includes('ademeler'),
+    loyal,
+  })
+  if (!selection) return NextResponse.json({ error: 'Prestation ou options invalides' }, { status: 422 })
+
+  // ID et données commerciales générés côté serveur
+  const availability = await checkRdvAvailability(date, [{ slot: slot as string, duration: selection.totalDuration }])
+  if (!availability.ok) {
+    if (availability.reason === 'error') return NextResponse.json({ error: 'Vérification des disponibilités impossible' }, { status: 500 })
+    return NextResponse.json({ error: 'Ce créneau n’est plus disponible. Choisissez-en un autre.' }, { status: 409 })
+  }
+
   const booking: RdvBooking = {
     id: randomUUID(),
     createdAt: new Date().toISOString(),
-    nom: nom.trim(),
-    email: email.trim().toLowerCase(),
-    telephone: telephone.trim(),
+    nom: normalizedName,
+    email: normalizedEmail,
+    telephone: normalizedPhone,
     categorie: categorie as RdvBooking['categorie'],
     prestation,
-    prestationLabel,
-    degrade: typeof body.degrade === 'string' ? body.degrade : undefined,
-    degradeLabel: typeof body.degradeLabel === 'string' ? body.degradeLabel : undefined,
-    options: options.slice(0, 10).filter((o: unknown) => typeof o === 'string'),
-    optionsLabels: optionsLabels.slice(0, 10).filter((o: unknown) => typeof o === 'string'),
-    totalPrice,
-    totalDuration,
+    prestationLabel: selection.service.label,
+    degrade: selection.degrade?.id,
+    degradeLabel: selection.degrade?.label,
+    options: selection.options.map(option => option.id),
+    optionsLabels: selection.options.map(option => option.label),
+    totalPrice: selection.totalPrice,
+    totalDuration: selection.totalDuration,
     date,
     slot: slot!,
+    notes: typeof body.notes === 'string' ? body.notes.trim().slice(0, 1200) : undefined,
     status: 'pending',
   }
 
@@ -91,10 +99,10 @@ export async function POST(req: Request) {
     .insert([toRdvRow(booking)])
 
   if (error) {
-    if (error.code === '23505') {
+    if (error.code === '23505' || error.code === '23P01') {
       return NextResponse.json({ error: 'Ce créneau vient d\'être pris. Choisissez-en un autre.' }, { status: 409 })
     }
-    console.error('Supabase rdv insert error:', error)
+    console.error('Échec de création du rendez-vous')
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 
@@ -106,13 +114,18 @@ export async function POST(req: Request) {
     optionsLabels: booking.optionsLabels, totalPrice: booking.totalPrice,
     totalDuration: booking.totalDuration, categorie: booking.categorie,
   }
-  const [emailSent] = await Promise.all([
-    sendRdvEmails(emailData),
+  const [emailResult] = await Promise.all([
+    sendRdvEmails(emailData, `rdv:${booking.id}`),
     sendRdvSmsClient({ nom: booking.nom, telephone: booking.telephone, date: booking.date, slot: booking.slot, prestationLabel: booking.prestationLabel }),
-    upsertClientRdv({ nom: booking.nom, email: booking.email, telephone: booking.telephone }),
+    upsertClientRdv({
+      nom: booking.nom,
+      email: booking.email,
+      telephone: booking.telephone,
+      marketingConsent: typeof body.marketingConsent === 'boolean' ? body.marketingConsent : undefined,
+    }),
   ])
 
-  return NextResponse.json({ ok: true, emailSent }, { status: 201 })
+  return NextResponse.json({ ok: true, emailSent: emailResult.ok, totalPrice: booking.totalPrice, totalDuration: booking.totalDuration }, { status: 201 })
 }
 
 export async function GET() {
@@ -127,7 +140,7 @@ export async function GET() {
     .order('created_at', { ascending: false })
     .or(`status.neq.cancelled,created_at.gte.${cutoff.toISOString()}`)
   if (error) {
-    console.error('Supabase rdv select error:', error)
+    console.error('Échec de chargement des rendez-vous')
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
   return NextResponse.json(data.map(fromRdvRow))

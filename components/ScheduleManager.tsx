@@ -3,10 +3,19 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { FullSchedule, ScheduleClosure, ScheduleBlock } from '@/lib/schedule-types'
 import { ALL_SLOTS, DAY_LABELS } from '@/lib/schedule-types'
+import ConfirmDialog from '@/components/ConfirmDialog'
+
+type ScheduleConfirmation =
+  | { kind: 'schedule' }
+  | { kind: 'closures'; dates: string[]; label: string }
+  | { kind: 'block'; id: string; label: string }
 
 export default function ScheduleManager() {
   const [schedule, setSchedule] = useState<FullSchedule | null>(null)
+  const [loadError, setLoadError] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [confirmation, setConfirmation] = useState<ScheduleConfirmation | null>(null)
+  const [confirming, setConfirming] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
 
   // Local edits (before save)
@@ -28,13 +37,15 @@ export default function ScheduleManager() {
   const BLK_PER_PAGE = 8
 
   const load = useCallback(async () => {
-    const res = await fetch('/api/schedule')
-    if (res.ok) {
+    try {
+      const res = await fetch('/api/schedule')
+      if (!res.ok) throw new Error('Schedule request failed')
       const data: FullSchedule = await res.json()
       setSchedule(data)
       setOpenDays(data.config.openDays)
       setSlots(data.config.slots)
-    }
+      setLoadError(false)
+    } catch { setLoadError(true) }
   }, [])
 
   useEffect(() => { load() }, [load])
@@ -46,36 +57,42 @@ export default function ScheduleManager() {
 
   async function saveConfig() {
     setSaving(true)
-    const res = await fetch('/api/schedule', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ openDays, slots }),
-    })
-    setSaving(false)
-    if (res.ok) { showToast('Créneaux mis à jour · visibles par les utilisateurs'); load() }
-    else showToast('Erreur lors de la sauvegarde')
+    try {
+      const res = await fetch('/api/schedule', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ openDays, slots }),
+      })
+      if (!res.ok) throw new Error('Schedule save failed')
+      await load()
+      showToast('Horaires enregistrés pour les prochaines réservations')
+    } finally {
+      setSaving(false)
+    }
   }
-
   async function addClosure() {
     if (!closDate) return
     const dates: string[] = []
     if (closDateEnd && closDateEnd > closDate) {
-      const cur = new Date(closDate)
-      const end = new Date(closDateEnd)
+      const cur = new Date(`${closDate}T00:00:00Z`)
+      const end = new Date(`${closDateEnd}T00:00:00Z`)
       while (cur <= end) {
         dates.push(cur.toISOString().slice(0, 10))
-        cur.setDate(cur.getDate() + 1)
+        cur.setUTCDate(cur.getUTCDate() + 1)
       }
     } else {
       dates.push(closDate)
     }
-    await Promise.all(dates.map(date =>
+    try {
+      const responses = await Promise.all(dates.map(date =>
       fetch('/api/schedule/closures', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ date, reason: closReason }),
       })
-    ))
+      ))
+      if (responses.some(response => !response.ok)) throw new Error('Closure save failed')
+    } catch { showToast('Impossible d’ajouter cette fermeture'); return }
     setClosDate(''); setClosDateEnd(''); setClosReason(''); load()
     showToast(dates.length > 1
       ? `${dates.length} jours fermés · visibles par les utilisateurs`
@@ -84,20 +101,25 @@ export default function ScheduleManager() {
   }
 
   async function deleteClosure(date: string) {
-    await fetch(`/api/schedule/closures/${date}`, { method: 'DELETE' })
+    const res = await fetch(`/api/schedule/closures/${date}`, { method: 'DELETE' })
+    if (!res.ok) throw new Error('Closure could not be deleted')
   }
 
   async function addBlock() {
     if (!blkDate || blkSlots.length === 0) return
-    await Promise.all(blkSlots.map(slot =>
-      fetch('/api/schedule/blocks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date: blkDate, slot, reason: blkReason }),
-      })
-    ))
+    const count = blkSlots.length
+    try {
+      const responses = await Promise.all(blkSlots.map(slot =>
+        fetch('/api/schedule/blocks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date: blkDate, slot, reason: blkReason }),
+        })
+      ))
+      if (responses.some(response => !response.ok)) throw new Error('Block save failed')
+    } catch { showToast('Impossible de bloquer ces créneaux'); return }
     setBlkDate(''); setBlkSlots([]); setBlkReason(''); load()
-    showToast(`${blkSlots.length} créneau${blkSlots.length > 1 ? 'x' : ''} bloqué${blkSlots.length > 1 ? 's' : ''} · visibles par les utilisateurs`)
+    showToast(`${count} ${count === 1 ? "créneau bloqué" : "créneaux bloqués"} · visibles pour la réservation`)
   }
 
   function toggleBlkSlot(s: string) {
@@ -105,8 +127,34 @@ export default function ScheduleManager() {
   }
 
   async function deleteBlock(id: string) {
-    await fetch(`/api/schedule/blocks/${id}`, { method: 'DELETE' })
-    load()
+    const res = await fetch(`/api/schedule/blocks/${id}`, { method: 'DELETE' })
+    if (!res.ok) throw new Error('Block could not be deleted')
+    await load()
+  }
+
+  async function applyConfirmation() {
+    if (!confirmation || confirming) return
+    setConfirming(true)
+    try {
+      if (confirmation.kind === 'schedule') {
+        await saveConfig()
+        setConfirmation(null)
+      } else if (confirmation.kind === 'closures') {
+        await Promise.all(confirmation.dates.map(deleteClosure))
+        await load()
+        showToast('Fermeture supprimée')
+        setConfirmation(null)
+      } else {
+        await deleteBlock(confirmation.id)
+        showToast('Créneau débloqué')
+        setConfirmation(null)
+      }
+    } catch {
+      setSaving(false)
+      showToast('La modification n’a pas pu être enregistrée')
+    } finally {
+      setConfirming(false)
+    }
   }
 
   function toggleDay(d: number) {
@@ -137,6 +185,13 @@ export default function ScheduleManager() {
     return groups
   }
 
+  if (!schedule && loadError) return (
+    <div className="res-card" role="alert">
+      <p>Impossible de charger le planning.</p>
+      <button className="btn btn-primary btn-sm" onClick={load}>Réessayer</button>
+    </div>
+  )
+
   if (!schedule) return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: '3rem' }}>
       <span className="spinner" style={{ width: 28, height: 28, borderWidth: 3 }} />
@@ -145,6 +200,21 @@ export default function ScheduleManager() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+      {confirmation && (
+        <ConfirmDialog
+          title={confirmation.kind === 'schedule' ? 'Appliquer ce planning ?' : confirmation.kind === 'closures' ? 'Supprimer cette fermeture ?' : 'Débloquer ce créneau ?'}
+          description={confirmation.kind === 'schedule'
+            ? 'Cette grille hebdomadaire s’appliquera aux nouveaux créneaux proposés pour toutes les dates futures, jusqu’à une prochaine modification. Les rendez-vous déjà enregistrés restent inchangés dans l’agenda.'
+            : confirmation.kind === 'closures'
+              ? `La fermeture du ${confirmation.label} sera retirée. Les clients pourront à nouveau réserver ces dates.`
+              : `Le blocage du ${confirmation.label} sera retiré. Ce créneau pourra à nouveau être réservé.`}
+          confirmLabel={confirmation.kind === 'schedule' ? 'Appliquer le planning' : 'Confirmer'}
+          destructive={confirmation.kind !== 'schedule'}
+          onConfirm={applyConfirmation}
+          onCancel={() => setConfirmation(null)}
+        />
+      )}
 
       {toast && (
         <div style={{
@@ -166,6 +236,10 @@ export default function ScheduleManager() {
       <div className="res-card">
         <div className="res-head" style={{ marginBottom: '1rem' }}>
           <div className="res-name">Jours d&apos;ouverture</div>
+        </div>
+        <div className="ad-schedule-period">
+          <strong>Planning hebdomadaire permanent</strong>
+          <span>Les jours et horaires cochés définissent les nouveaux créneaux proposés à la réservation pour toutes les dates futures, jusqu’à leur prochaine modification. Les rendez-vous déjà enregistrés restent inchangés dans l’agenda. Utilisez les fermetures et blocages ci-dessous pour une date précise.</span>
         </div>
         <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
           {DAY_LABELS.map((label, i) => {
@@ -224,7 +298,7 @@ export default function ScheduleManager() {
 
         <button
           className="btn btn-success btn-sm"
-          onClick={saveConfig}
+          onClick={() => setConfirmation({ kind: 'schedule' })}
           disabled={saving}
           style={{ alignSelf: 'flex-start' }}
         >
@@ -302,11 +376,11 @@ export default function ScheduleManager() {
                         {g.dates.length}j
                       </span>
                     )}
-                    {g.reason && <span style={{ color: 'rgba(255,255,255,.4)', fontSize: '.78rem' }}>— {g.reason}</span>}
+                    {g.reason && <span style={{ color: 'rgba(255,255,255,.4)', fontSize: '.78rem' }}>- {g.reason}</span>}
                   </div>
                   <button
                     className="btn btn-danger btn-sm"
-                    onClick={() => Promise.all(g.dates.map(d => deleteClosure(d))).then(load)}
+                    onClick={() => setConfirmation({ kind: 'closures', dates: g.dates, label })}
                     style={{ padding: '.25rem .6rem', fontSize: '.75rem', flexShrink: 0 }}
                   >
                     ✕
@@ -415,11 +489,11 @@ export default function ScheduleManager() {
                     <div>
                       <span style={{ fontWeight: 600, color: '#fff', fontSize: '.85rem' }}>{fmtDate(b.date)}</span>
                       <span style={{ color: 'var(--yellow)', fontSize: '.85rem', margin: '0 .4rem' }}>à {b.slot}</span>
-                      {b.reason && <span style={{ color: 'rgba(255,255,255,.4)', fontSize: '.78rem' }}>— {b.reason}</span>}
+                      {b.reason && <span style={{ color: 'rgba(255,255,255,.4)', fontSize: '.78rem' }}>- {b.reason}</span>}
                     </div>
                     <button
                       className="btn btn-danger btn-sm"
-                      onClick={() => deleteBlock(b.id)}
+                      onClick={() => setConfirmation({ kind: 'block', id: b.id, label: `${fmtDate(b.date)} à ${b.slot}` })}
                       style={{ padding: '.25rem .6rem', fontSize: '.75rem' }}
                     >
                       ✕

@@ -2,8 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'CGV & Contrat de Location — PHENO&CO',
+  title: 'CGV & Contrat de Location - PHENO&CO',
   description: 'Conditions générales de location de fauteuil chez PHENO&CO, barbershop à Montpellier.',
+  alternates: { canonical: '/cgv-location' },
 }
 
 export default function CgvPage() {
@@ -15,10 +16,10 @@ export default function CgvPage() {
         </nav>
 
         <h1 className="cgv-heading">CGV &amp; Contrat de Location</h1>
-        <p className="cgv-sub">Conditions générales de location de fauteuil — PHENO&CO Montpellier</p>
+        <p className="cgv-sub">Conditions générales de location de fauteuil - PHENO&CO Montpellier</p>
 
         <div className="cgv-article">
-          <h2>Article 1 — Objet du Contrat</h2>
+          <h2>Article 1 - Objet du Contrat</h2>
           <p>
             Le présent contrat a pour objet de définir les conditions de mise à disposition d&apos;un poste de
             travail (fauteuil) au sein du salon de coiffure <strong>PHENO&CO</strong>, situé à Montpellier.
@@ -30,7 +31,7 @@ export default function CgvPage() {
         </div>
 
         <div className="cgv-article">
-          <h2>Article 2 — Conditions d&apos;Éligibilité</h2>
+          <h2>Article 2 - Conditions d&apos;Éligibilité</h2>
           <p style={{ marginBottom: '0.75rem' }}>Pour louer un fauteuil chez PHENO&CO, le locataire doit :</p>
           <ul>
             <li>Justifier d&apos;au moins 3 ans d&apos;expérience professionnelle</li>
@@ -46,7 +47,7 @@ export default function CgvPage() {
         </div>
 
         <div className="cgv-article">
-          <h2>Article 3 — Tarification</h2>
+          <h2>Article 3 - Tarification</h2>
 
           <h3>3.1 Location Courte Durée</h3>
           <table>
@@ -109,7 +110,7 @@ export default function CgvPage() {
         </div>
 
         <div className="cgv-article">
-          <h2>Article 4 — Réservation et Paiement</h2>
+          <h2>Article 4 - Réservation et Paiement</h2>
           <ol>
             <li>Remplir le formulaire de demande en ligne</li>
             <li>Recevoir un e-mail de confirmation avec récapitulatif</li>
@@ -124,7 +125,7 @@ export default function CgvPage() {
         </div>
 
         <div className="cgv-article">
-          <h2>Article 5 — Annulation</h2>
+          <h2>Article 5 - Annulation</h2>
           <ul>
             <li>Plus de 48h avant le début : remboursement intégral de l&apos;acompte</li>
             <li>Entre 24h et 48h avant : remboursement de 50 % de l&apos;acompte</li>
@@ -134,8 +135,8 @@ export default function CgvPage() {
         </div>
 
         <div className="cgv-article">
-          <h2>Article 6 — Contact</h2>
-          <p><strong>PHENO&CO</strong> — Barbershop &amp; Coworking, Montpellier</p>
+          <h2>Article 6 - Contact</h2>
+          <p><strong>PHENO&CO</strong> - Barbershop &amp; Coworking, Montpellier</p>
           <p style={{ marginTop: '0.5rem' }}>
             E-mail :{' '}
             <a href="mailto:location.phenoandco@gmail.com" style={{ color: 'var(--yellow)' }}>
@@ -152,7 +153,7 @@ export default function CgvPage() {
       </div>
 
       <footer className="site-footer">
-        <p>PHENO&CO — Barbershop &amp; Coworking · Montpellier</p>
+        <p>PHENO&CO - Barbershop &amp; Coworking · Montpellier</p>
         <p style={{ marginTop: '0.4rem' }}>
           <Link href="/location">← Retour au formulaire de réservation</Link>
         </p>

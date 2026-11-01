@@ -1,18 +1,14 @@
 import type { Metadata } from 'next'
-import { Poppins, Playfair_Display, Bebas_Neue } from 'next/font/google'
+import { Plus_Jakarta_Sans, Bebas_Neue } from 'next/font/google'
 import './globals.css'
+import '../components/site-nav.css'
+import '../components/site-footer.css'
+import SiteNav from '../components/SiteNav'
 
-const poppins = Poppins({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-poppins',
-  display: 'swap',
-})
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-  variable: '--font-playfair',
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-plus-jakarta',
   display: 'swap',
 })
 
@@ -26,10 +22,10 @@ const bebasNeue = Bebas_Neue({
 export const metadata: Metadata = {
   metadataBase: new URL('https://phenoandco.fr'),
   title: {
-    default: 'PHENO&CO — Barbershop & Coiffure Afro Montpellier',
+    default: 'PHENO&CO - Barbershop & Coiffure Afro Montpellier',
     template: '%s | PHENO&CO Barbershop Montpellier',
   },
-  description: 'Barbershop & coiffure afro à Montpellier depuis 2009. Dégradé, coupe homme, barbe — 18 rue d\'Alger, Saint-Roch. Réservation en ligne 24h/24, sans attente.',
+  description: 'Barbershop & coiffure afro à Montpellier depuis 2009. Dégradé, coupe homme, barbe - 18 rue d\'Alger, Saint-Roch. Réservation en ligne 24h/24, sans attente.',
   keywords: [
     'barbershop montpellier',
     'coiffeur afro montpellier',
@@ -44,10 +40,18 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'PHENO&CO Barbershop' }],
   creator: 'PHENO&CO',
+  icons: {
+    icon: [
+      { url: '/favicon-pheno-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-pheno.png', sizes: '512x512', type: 'image/png' },
+    ],
+    shortcut: '/favicon-pheno-32.png',
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   openGraph: {
-    title: 'PHENO&CO — Barbershop & Coiffure Afro Montpellier',
-    description: 'Barbershop & coiffure afro depuis 2009. Dégradé, coupe, barbe — réservez en ligne.',
+    title: 'PHENO&CO - Barbershop & Coiffure Afro Montpellier',
+    description: 'Barbershop & coiffure afro depuis 2009. Dégradé, coupe, barbe - réservez en ligne.',
     type: 'website',
     locale: 'fr_FR',
     url: 'https://phenoandco.fr',
@@ -61,8 +65,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'PHENO&CO — Barbershop & Coiffure Afro Montpellier',
-    description: 'Barbershop & coiffure afro depuis 2009. Dégradé, coupe, barbe — réservez en ligne.',
+    title: 'PHENO&CO - Barbershop & Coiffure Afro Montpellier',
+    description: 'Barbershop & coiffure afro depuis 2009. Dégradé, coupe, barbe - réservez en ligne.',
     images: ['/logo-pheno.png'],
   },
   alternates: { canonical: 'https://phenoandco.fr' },
@@ -73,7 +77,7 @@ const jsonLd = {
   '@type': 'HairSalon',
   name: 'PHENO&CO Barbershop',
   image: 'https://phenoandco.fr/logo-pheno.png',
-  description: 'Barbershop & coiffure afro à Montpellier. Dégradé, coupe homme, barbe — depuis 2009.',
+  description: 'Barbershop & coiffure afro à Montpellier. Dégradé, coupe homme, barbe - depuis 2009.',
   '@id': 'https://phenoandco.fr',
   url: 'https://phenoandco.fr',
   telephone: '+33769432605',
@@ -96,12 +100,6 @@ const jsonLd = {
     closes: '18:00',
   }],
   priceRange: '€€',
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '5.0',
-    bestRating: '5',
-    reviewCount: '150',
-  },
   sameAs: [
     'https://www.instagram.com/pheno_barber/',
     'https://www.tiktok.com/@pheno_barber',
@@ -110,7 +108,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${poppins.variable} ${playfair.variable} ${bebasNeue.variable}`}>
+    <html lang="fr" className={`${plusJakarta.variable} ${bebasNeue.variable}`}>
       <head>
         <script
           type="application/ld+json"
@@ -118,6 +116,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body suppressHydrationWarning>
+        <SiteNav />
         {children}
       </body>
     </html>

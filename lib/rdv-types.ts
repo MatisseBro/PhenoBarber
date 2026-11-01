@@ -20,4 +20,6 @@ export interface RdvBooking {
   slot: string
   status: RdvStatus
   notes?: string
+  groupId?: string
+  personLabel?: string
 }

@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Link from "next/link";
 import { fmt, formatDate, whatsappLink } from "@/lib/utils";
 import { FORMULE_LABELS } from "@/lib/constants";
 import type { Reservation, StatusType, FormulaType } from "@/lib/types";
 import type { RdvBooking, RdvStatus } from "@/lib/rdv-types";
 import ScheduleManager from "@/components/ScheduleManager";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import { buildCsv } from "@/lib/csv";
 
 const STATUS_LABELS: Record<StatusType, string> = {
   pending: "En attente",
@@ -45,10 +47,8 @@ function exportCSV(reservations: Reservation[]) {
     r.status,
     r.notes ?? "",
   ]);
-  const csv = [headers, ...rows]
-    .map((r) => r.map((c) => `"${c}"`).join(";"))
-    .join("\n");
-  const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+  const csv = buildCsv([headers, ...rows]);
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -75,7 +75,7 @@ function ReservationCard({
   reservation: r,
   onStatusChange,
 }: ReservationCardProps) {
-  const waMsg = `Bonjour ${r.nom}, votre réservation PHENO&CO du ${r.dateDebut} (${FORMULE_LABELS[r.formule]}) est ${r.status === "confirmed" ? "confirmée" : "en attente"}. Total : ${fmt(r.totalTTC)} — Acompte : ${fmt(r.acompte)}. Réf : ${r.id}`;
+  const waMsg = `Bonjour ${r.nom}, votre réservation PHENO&CO du ${r.dateDebut} (${FORMULE_LABELS[r.formule]}) est ${r.status === "confirmed" ? "confirmée" : "en attente"}. Total : ${fmt(r.totalTTC)} - Acompte : ${fmt(r.acompte)}. Réf : ${r.id}`;
 
   return (
     <div className="res-card">
@@ -201,6 +201,46 @@ const RDV_STATUS_LABELS: Record<RdvStatus, string> = {
 
 const CAT_LABELS: Record<string, string> = { homme: "Homme", femme: "Femme", enfant: "Enfant" };
 
+type AdminTab = "rdv" | "clients" | "location" | "schedule";
+
+interface AdminClient {
+  id: string;
+  nom: string;
+  email: string | null;
+  telephone: string | null;
+  rdv_count: number;
+  location_count: number;
+  last_rdv_at?: string | null;
+  created_at: string;
+}
+
+interface ClientImportResult {
+  imported: number;
+  updated: number;
+  skipped: number;
+  errors?: Array<{ line: number; message: string }>;
+}
+
+interface ClientImportError {
+  message: string;
+  details?: Array<{ line: number; message: string }>;
+}
+
+function DashboardIcon({ name }: { name: "agenda" | "clients" | "location" | "schedule" | "search" | "menu" | "download" | "home" | "logout" }) {
+  const paths = {
+    agenda: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" /></>,
+    clients: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></>,
+    location: <><path d="M6 21v-7M18 21v-7M4 10h16l-2-7H6l-2 7Z" /><path d="M5 10a3 3 0 0 0 6 0 3 3 0 0 0 6 0M9 21v-5h6v5" /></>,
+    schedule: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
+    search: <><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></>,
+    menu: <path d="M4 7h16M4 12h16M4 17h16" />,
+    download: <><path d="M12 3v12M7 10l5 5 5-5M5 21h14" /></>,
+    home: <><path d="m3 11 9-8 9 8" /><path d="M5 10v10h14V10M9 20v-6h6v6" /></>,
+    logout: <><path d="M10 17l5-5-5-5M15 12H3" /><path d="M15 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" /></>,
+  };
+  return <svg className="ad-icon" viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
+}
+
 function fmtDur(m: number) {
   if (m <= 0) return "";
   if (m < 60) return `${m} min`;
@@ -222,8 +262,8 @@ function exportRdvCSV(bookings: RdvBooking[]) {
     fmtDur(b.totalDuration),
     b.date, b.slot, b.status,
   ]);
-  const csv = [headers, ...rows].map(r => r.map(c => `"${c}"`).join(";")).join("\n");
-  const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+  const csv = buildCsv([headers, ...rows]);
+  const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -320,15 +360,28 @@ export default function AdminDashboard() {
   const [pwd, setPwd] = useState("");
   const [pwdError, setPwdError] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
-  const [activeTab, setActiveTab] = useState<"location" | "rdv" | "schedule">("rdv");
+  const [activeTab, setActiveTab] = useState<AdminTab>("rdv");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [rdvBookings, setRdvBookings] = useState<RdvBooking[]>([]);
+  const [clients, setClients] = useState<AdminClient[]>([]);
+  const [clientTotal, setClientTotal] = useState(0);
+  const [clientPage, setClientPage] = useState(0);
+  const [clientsLoading, setClientsLoading] = useState(false);
+  const [clientActivity, setClientActivity] = useState<"all" | "rdv" | "location" | "inactive">("all");
+  const [clientSort, setClientSort] = useState<"recent" | "name" | "rdv">("recent");
+  const [importingClients, setImportingClients] = useState(false);
+  const [clientImportResult, setClientImportResult] = useState<ClientImportResult | null>(null);
+  const [clientImportError, setClientImportError] = useState<ClientImportError | null>(null);
+  const csvInputRef = useRef<HTMLInputElement>(null);
   const [filterStatus, setFilterStatus] = useState<StatusType | "all">("all");
   const [filterFormule, setFilterFormule] = useState<FormulaType | "all">("all");
   const [rdvFilterStatus, setRdvFilterStatus] = useState<RdvStatus | "all">("all");
   const [rdvDateFilter, setRdvDateFilter] = useState<"all" | "today" | "tomorrow" | "upcoming">("all");
   const [rdvPage, setRdvPage] = useState(0);
   const [locPage, setLocPage] = useState(0);
+  const [cancelTarget, setCancelTarget] = useState<{ kind: "rdv" | "location"; id: string } | null>(null);
   const PER_PAGE = 10;
   const [toast, setToast] = useState<{
     msg: string;
@@ -344,6 +397,62 @@ export default function AdminDashboard() {
     const res = await fetch("/api/rdv");
     if (res.ok) setRdvBookings(await res.json());
   }, []);
+
+  const loadClients = useCallback(async (q = "", page = 0, activity = "all", sort = "recent") => {
+    setClientsLoading(true);
+    try {
+      const params = new URLSearchParams({ page: String(page), activity, sort });
+      if (q.trim().length >= 2) params.set("q", q.trim());
+      const res = await fetch(`/api/admin/clients?${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setClients(data.clients ?? []);
+        setClientTotal(data.total ?? 0);
+      }
+    } finally {
+      setClientsLoading(false);
+    }
+  }, []);
+
+  async function importClientsCsv(file: File) {
+    if (!file.name.toLowerCase().endsWith(".csv")) {
+      const message = "Sélectionnez un fichier au format CSV.";
+      setClientImportError({ message }); showToast(message, "error"); return;
+    }
+    if (file.size > 1_000_000) {
+      const message = "Le fichier dépasse la limite de 1 Mo.";
+      setClientImportError({ message }); showToast(message, "error"); return;
+    }
+    setImportingClients(true);
+    setClientImportResult(null);
+    setClientImportError(null);
+    try {
+      const bytes = await file.arrayBuffer();
+      let csvText = new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+      if (csvText.includes("�")) csvText = new TextDecoder("windows-1252").decode(bytes);
+      const response = await fetch("/api/admin/clients", {
+        method: "POST",
+        headers: { "Content-Type": "text/csv; charset=utf-8" },
+        body: csvText,
+      });
+      const result = await response.json().catch(() => ({ error: "Réponse du serveur illisible." }));
+      if (!response.ok) {
+        setClientImportError({ message: result.error || "Import impossible.", details: result.errors });
+        throw new Error(result.error || "Import impossible.");
+      }
+      setClientImportResult(result);
+      setClientPage(0);
+      await loadClients(searchQuery, 0, clientActivity, clientSort);
+      showToast(`${result.imported} client(s) ajouté(s), ${result.updated} mis à jour`, "success");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Import CSV impossible.";
+      setClientImportError(current => current ?? { message });
+      showToast(message, "error");
+    } finally {
+      setImportingClients(false);
+      if (csvInputRef.current) csvInputRef.current.value = "";
+    }
+  }
 
   useEffect(() => {
     fetch("/api/admin/check").then((r) => {
@@ -378,6 +487,8 @@ export default function AdminDashboard() {
     setLoggedIn(false);
     setReservations([]);
     setRdvBookings([]);
+    setClients([]);
+    setClientTotal(0);
   }
 
   async function changeStatus(id: string, status: StatusType) {
@@ -409,24 +520,45 @@ export default function AdminDashboard() {
     showToast(msg, "success");
   }
 
+  function requestReservationStatus(id: string, status: StatusType) {
+    if (status === "cancelled") { setCancelTarget({ kind: "location", id }); return; }
+    void changeStatus(id, status);
+  }
+
+  function requestRdvStatus(id: string, status: RdvStatus) {
+    if (status === "cancelled") { setCancelTarget({ kind: "rdv", id }); return; }
+    void changeRdvStatus(id, status);
+  }
+
+  async function confirmCancellation() {
+    if (!cancelTarget) return;
+    if (cancelTarget.kind === "rdv") await changeRdvStatus(cancelTarget.id, "cancelled");
+    else await changeStatus(cancelTarget.id, "cancelled");
+    setCancelTarget(null);
+  }
+
   function showToast(msg: string, type: "success" | "error") {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 3500);
   }
 
   const filtered = useMemo(() => {
+    const query = searchQuery.trim().toLocaleLowerCase("fr");
     return reservations
       .filter((r) => filterStatus === "all" || r.status === filterStatus)
-      .filter((r) => filterFormule === "all" || r.formule === filterFormule);
-  }, [reservations, filterStatus, filterFormule]);
+      .filter((r) => filterFormule === "all" || r.formule === filterFormule)
+      .filter((r) => !query || `${r.nom} ${r.email} ${r.telephone}`.toLocaleLowerCase("fr").includes(query));
+  }, [reservations, filterStatus, filterFormule, searchQuery]);
 
   useEffect(() => { setLocPage(0); }, [filterStatus, filterFormule]);
 
   const filteredRdv = useMemo(() => {
     const today = new Date().toISOString().slice(0, 10);
     const tomorrow = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+    const query = searchQuery.trim().toLocaleLowerCase("fr");
     return rdvBookings
       .filter(b => rdvFilterStatus === "all" || b.status === rdvFilterStatus)
+      .filter(b => !query || `${b.nom} ${b.email} ${b.telephone} ${b.prestationLabel}`.toLocaleLowerCase("fr").includes(query))
       .filter(b => {
         if (rdvDateFilter === "today") return b.date === today;
         if (rdvDateFilter === "tomorrow") return b.date === tomorrow;
@@ -434,7 +566,15 @@ export default function AdminDashboard() {
         return true;
       })
       .sort((a, b) => a.date === b.date ? a.slot.localeCompare(b.slot) : a.date.localeCompare(b.date));
-  }, [rdvBookings, rdvFilterStatus, rdvDateFilter]);
+  }, [rdvBookings, rdvFilterStatus, rdvDateFilter, searchQuery]);
+
+  useEffect(() => {
+    if (!loggedIn || activeTab !== "clients") return;
+    const timer = setTimeout(() => loadClients(searchQuery, clientPage, clientActivity, clientSort), 250);
+    return () => clearTimeout(timer);
+  }, [loggedIn, activeTab, searchQuery, clientPage, clientActivity, clientSort, loadClients]);
+
+  useEffect(() => { setClientPage(0); }, [searchQuery, clientActivity, clientSort]);
 
   useEffect(() => { setRdvPage(0); }, [rdvFilterStatus, rdvDateFilter]);
 
@@ -476,7 +616,7 @@ export default function AdminDashboard() {
       <div className="admin-login">
         <div className="login-card">
           <h1>PHENO&CO</h1>
-          <p>Espace administration — accès réservé</p>
+          <p>Espace administration - accès réservé</p>
           <form onSubmit={login}>
             <div className="form-group">
               <label className="form-label">Mot de passe</label>
@@ -535,59 +675,97 @@ export default function AdminDashboard() {
     );
   }
 
+  const tabMeta: Record<AdminTab, { eyebrow: string; title: string; subtitle: string }> = {
+    rdv: { eyebrow: "Agenda", title: "Rendez-vous coiffure", subtitle: "Pilotez les rendez-vous du salon et leur statut." },
+    clients: { eyebrow: "Répertoire", title: "Clients", subtitle: "Retrouvez les coordonnées et l’historique de vos clients." },
+    location: { eyebrow: "Fauteuils", title: "Demandes de location", subtitle: "Gérez les demandes des professionnels du salon." },
+    schedule: { eyebrow: "Organisation", title: "Créneaux & horaires", subtitle: "Définissez les ouvertures, fermetures et indisponibilités." },
+  };
+  const currentMeta = tabMeta[activeTab];
+  const adminToday = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long" }).format(new Date());
+
   return (
-    <main>
+    <main className="admin-dashboard">
+      {cancelTarget && (
+        <ConfirmDialog
+          title={cancelTarget.kind === "rdv" ? "Annuler ce rendez-vous ?" : "Annuler cette demande ?"}
+          description={cancelTarget.kind === "rdv"
+            ? "Le rendez-vous sera marqué comme annulé. Il restera visible dans l’agenda avec son historique."
+            : "La demande de location sera marquée comme annulée. Elle restera visible dans l’administration avec son historique."}
+          confirmLabel="Confirmer l’annulation"
+          onConfirm={confirmCancellation}
+          onCancel={() => setCancelTarget(null)}
+        />
+      )}
       <div className={`toast${toast ? ` show ${toast.type}` : ""}`}>
         <div className="toast-title">
           {toast?.type === "success" ? "✓" : "⚠"} {toast?.msg}
         </div>
       </div>
 
-      <div className="admin-wrap">
-        <div className="admin-header">
-          <div>
-            <Link href="/" className="back-link admin-breadcrumb">
-              ← Retour au site
-            </Link>
-            <h1>Tableau de bord</h1>
-          </div>
-          <div className="admin-topbar">
-            <button
-              className="btn btn-ghost btn-sm"
-              onClick={() => activeTab === "rdv" ? exportRdvCSV(filteredRdv) : exportCSV(filtered)}
-            >
-              ⬇ Exporter CSV
-            </button>
-            <a href="https://wa.me/message/MZYDVEN32I55L1" target="_blank" rel="noopener noreferrer" className="btn btn-wa btn-sm">
-              💬 WhatsApp
-            </a>
-            <button className="btn btn-ghost btn-sm" onClick={logout}>Déconnexion</button>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", borderBottom: "1px solid rgba(255,255,255,.08)", paddingBottom: "0", flexWrap: "wrap" }}>
+      <button className={`ad-scrim${sidebarOpen ? " is-open" : ""}`} aria-label="Fermer le menu" onClick={() => setSidebarOpen(false)} />
+      <aside className={`ad-sidebar${sidebarOpen ? " is-open" : ""}`}>
+        <Link href="/" className="ad-brand">
+          <span className="ad-brand-mark">P<span>&amp;</span></span>
+          <span><strong>PHENO&amp;CO</strong><small>Espace administrateur</small></span>
+        </Link>
+        <p className="ad-nav-title">Votre salon</p>
+        <nav className="ad-nav" aria-label="Navigation du tableau de bord">
           {([
-            { key: "rdv",      label: `✂ RDV Coupe (${rdvStats.total})` },
-            { key: "location", label: `🪑 Location fauteuil (${stats.total})` },
-            { key: "schedule", label: "🗓 Créneaux" },
-          ] as const).map(tab => (
+            { key: "rdv", label: "Agenda", icon: "agenda", count: rdvStats.total },
+            { key: "clients", label: "Clients", icon: "clients", count: clientTotal || undefined },
+            { key: "location", label: "Location fauteuil", icon: "location", count: stats.total },
+            { key: "schedule", label: "Créneaux & horaires", icon: "schedule" },
+          ] as { key: AdminTab; label: string; icon: "agenda" | "clients" | "location" | "schedule"; count?: number }[]).map(item => (
             <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              style={{
-                background: "none", border: "none", cursor: "pointer",
-                padding: ".6rem 1.2rem",
-                fontWeight: activeTab === tab.key ? 700 : 400,
-                color: activeTab === tab.key ? "var(--yellow)" : "rgba(255,255,255,.45)",
-                borderBottom: activeTab === tab.key ? "2px solid var(--yellow)" : "2px solid transparent",
-                fontSize: ".9rem", letterSpacing: ".04em",
-              }}
+              key={item.key}
+              className={`ad-nav-item${activeTab === item.key ? " is-active" : ""}`}
+              onClick={() => { setActiveTab(item.key); setSidebarOpen(false); }}
+              aria-current={activeTab === item.key ? "page" : undefined}
             >
-              {tab.label}
+              <DashboardIcon name={item.icon} />
+              <span>{item.label}</span>
+              {item.count !== undefined && <small>{item.count}</small>}
             </button>
           ))}
+        </nav>
+        <div className="ad-side-bottom">
+          <Link href="/" className="ad-nav-item"><DashboardIcon name="home" /><span>Voir le site</span></Link>
+          <button className="ad-profile" onClick={logout}>
+            <span className="ad-avatar">P&amp;</span>
+            <span><strong>PHENO&amp;CO</strong><small>Déconnexion</small></span>
+            <DashboardIcon name="logout" />
+          </button>
+          <p className="ad-version">Dashboard connecté · v2</p>
         </div>
+      </aside>
+
+      <div className="ad-app">
+        <header className="ad-topbar">
+          <button className="ad-menu-button" onClick={() => setSidebarOpen(true)} aria-label="Ouvrir le menu"><DashboardIcon name="menu" /></button>
+          <label className="ad-search">
+            <DashboardIcon name="search" />
+            <input aria-label="Rechercher dans les clients et réservations" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Rechercher un client, un téléphone…" />
+          </label>
+          <div className="ad-top-actions">
+            <span className="ad-connection"><i /> Base connectée</span>
+            {activeTab !== "schedule" && activeTab !== "clients" && (
+              <button className="ad-button ad-button-ghost" onClick={() => activeTab === "rdv" ? exportRdvCSV(filteredRdv) : exportCSV(filtered)}>
+                <DashboardIcon name="download" /> Exporter CSV
+              </button>
+            )}
+          </div>
+        </header>
+
+        <div className="ad-content">
+          <div className="ad-page-head">
+            <div>
+              <p className="ad-eyebrow">{currentMeta.eyebrow}</p>
+              <h1>{currentMeta.title}</h1>
+              <p className="ad-subtitle">{currentMeta.subtitle}</p>
+            </div>
+            <div className="ad-page-date"><span>Aujourd&apos;hui</span><strong>{adminToday}</strong></div>
+          </div>
 
         {/* ── RDV COUPE TAB ── */}
         {activeTab === "rdv" && (
@@ -654,7 +832,7 @@ export default function AdminDashboard() {
               <>
                 <div className="res-list">
                   {rdvVisible.map(b => (
-                    <RdvBookingCard key={b.id} booking={b} onStatusChange={changeRdvStatus} />
+                    <RdvBookingCard key={b.id} booking={b} onStatusChange={requestRdvStatus} />
                   ))}
                 </div>
                 {rdvPageCount > 1 && (
@@ -667,6 +845,104 @@ export default function AdminDashboard() {
               </>
             )}
           </>
+        )}
+
+        {/* ── CLIENTS TAB ── */}
+        {activeTab === "clients" && (
+          <section className="ad-panel">
+            <div className="ad-panel-head">
+              <div>
+                <h2>Répertoire clients</h2>
+                <p>{clientTotal} client{clientTotal !== 1 ? "s" : ""} enregistré{clientTotal !== 1 ? "s" : ""}</p>
+              </div>
+              <div className="ad-panel-actions">
+                <span className="ad-panel-tag">Page {clientPage + 1}</span>
+                <input
+                  ref={csvInputRef}
+                  className="ad-file-input"
+                  type="file"
+                  accept=".csv,text/csv"
+                  onChange={event => { const file = event.target.files?.[0]; if (file) importClientsCsv(file); }}
+                />
+                <button className="ad-button ad-import-button" disabled={importingClients} onClick={() => csvInputRef.current?.click()}>
+                  <DashboardIcon name="download" /> {importingClients ? "Import…" : "Importer un CSV"}
+                </button>
+              </div>
+            </div>
+            <div className="ad-client-tools">
+              <div className="ad-filter-chips" role="group" aria-label="Filtrer les clients">
+                {([
+                  { key: "all", label: "Tous" },
+                  { key: "rdv", label: "Avec RDV" },
+                  { key: "location", label: "Avec location" },
+                  { key: "inactive", label: "Inactifs 90 jours" },
+                ] as const).map(filter => (
+                  <button key={filter.key} className={clientActivity === filter.key ? "is-active" : ""} onClick={() => setClientActivity(filter.key)}>{filter.label}</button>
+                ))}
+              </div>
+              <label className="ad-sort-label">Trier par
+                <select value={clientSort} onChange={event => setClientSort(event.target.value as typeof clientSort)}>
+                  <option value="recent">Dernière visite</option>
+                  <option value="name">Nom A–Z</option>
+                  <option value="rdv">Nombre de RDV</option>
+                </select>
+              </label>
+            </div>
+            <div className="ad-import-help">
+              <strong>Format accepté :</strong> Nom complet (ou Prénom + Nom), Téléphone, Email. Colonnes facultatives : RDV, Locations, Dernier RDV. Maximum 1 000 lignes.
+            </div>
+            {clientImportResult && (
+              <div className="ad-import-result">
+                <strong>Import terminé</strong>
+                <span>{clientImportResult.imported} ajouté{clientImportResult.imported !== 1 ? "s" : ""}</span>
+                <span>{clientImportResult.updated} mis à jour</span>
+                <span>{clientImportResult.skipped} ignoré{clientImportResult.skipped !== 1 ? "s" : ""}</span>
+                {clientImportResult.errors?.length ? <small>Première erreur : ligne {clientImportResult.errors[0].line}, {clientImportResult.errors[0].message.toLowerCase()}.</small> : null}
+              </div>
+            )}
+            {clientImportError && (
+              <div className="ad-import-error" role="alert">
+                <strong>Import impossible</strong>
+                <p>{clientImportError.message}</p>
+                {clientImportError.details?.length ? (
+                  <small>Ligne {clientImportError.details[0].line} : {clientImportError.details[0].message}</small>
+                ) : null}
+                <button type="button" onClick={() => setClientImportError(null)} aria-label="Fermer le message">×</button>
+              </div>
+            )}
+            {clientsLoading ? (
+              <div className="ad-table-empty"><span className="spinner" /> Chargement des clients…</div>
+            ) : clients.length === 0 ? (
+              <div className="ad-table-empty">Aucun client trouvé.</div>
+            ) : (
+              <div className="ad-table-scroll">
+                <table className="ad-client-table">
+                  <thead><tr><th>Client</th><th>Contact</th><th>Rendez-vous</th><th>Locations</th><th>Dernière visite</th></tr></thead>
+                  <tbody>
+                    {clients.map(client => (
+                      <tr key={client.id}>
+                        <td><div className="ad-client-name"><span>{client.nom?.slice(0, 2).toUpperCase() || "CL"}</span><strong>{client.nom || "Client"}</strong></div></td>
+                        <td>
+                          {client.telephone ? <a href={`tel:${client.telephone}`}>{client.telephone}</a> : <span>-</span>}
+                          <small>{client.email ? <a href={`mailto:${client.email}`}>{client.email}</a> : <span>-</span>}</small>
+                        </td>
+                        <td><strong>{client.rdv_count ?? 0}</strong></td>
+                        <td><strong>{client.location_count ?? 0}</strong></td>
+                        <td>{client.last_rdv_at ? new Date(client.last_rdv_at).toLocaleDateString("fr-FR") : "-"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {clientTotal > 30 && (
+              <div className="pagination ad-client-pagination">
+                <button className="ad-button ad-button-ghost" disabled={clientPage === 0} onClick={() => setClientPage(page => page - 1)}>← Précédent</button>
+                <span className="page-info">{clientPage + 1} / {Math.ceil(clientTotal / 30)}</span>
+                <button className="ad-button ad-button-ghost" disabled={(clientPage + 1) * 30 >= clientTotal} onClick={() => setClientPage(page => page + 1)}>Suivant →</button>
+              </div>
+            )}
+          </section>
         )}
 
         {/* ── LOCATION FAUTEUIL TAB ── */}
@@ -713,7 +989,7 @@ export default function AdminDashboard() {
               <>
                 <div className="res-list">
                   {locVisible.map(r => (
-                    <ReservationCard key={r.id} reservation={r} onStatusChange={changeStatus} />
+                    <ReservationCard key={r.id} reservation={r} onStatusChange={requestReservationStatus} />
                   ))}
                 </div>
                 {locPageCount > 1 && (
@@ -730,11 +1006,8 @@ export default function AdminDashboard() {
         {/* ── CRÉNEAUX TAB ── */}
         {activeTab === "schedule" && <ScheduleManager />}
 
+        </div>
       </div>
-
-      <footer className="site-footer">
-        <p>PHENO&CO — Administration</p>
-      </footer>
     </main>
   );
 }

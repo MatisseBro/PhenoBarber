@@ -1,11 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 
-// Mocker @supabase/supabase-js avant d'importer lib/supabase
-vi.mock('@supabase/supabase-js', () => ({
-  createClient: vi.fn().mockReturnValue({}),
-}))
-
-import { toRow, fromRow } from '@/lib/supabase'
+import { toRow, fromRow, getSupabase } from '@/lib/supabase'
 import type { Reservation } from '@/lib/types'
 
 const mockReservation: Reservation = {
@@ -71,6 +66,20 @@ describe('toRow', () => {
     expect(row.heure_debut).toBe('10:00')
     expect(row.heure_fin).toBe('12:00')
     expect(row.notes).toBe('Demande spéciale')
+  })
+})
+
+describe('runtime Supabase Node', () => {
+  it('construit le client REST sans initialiser Realtime/WebSocket', () => {
+    const previousUrl = process.env.SUPABASE_URL
+    const previousKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    process.env.SUPABASE_URL = 'https://example.supabase.co'
+    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-placeholder'
+    expect(() => getSupabase()).not.toThrow()
+    if (previousUrl === undefined) delete process.env.SUPABASE_URL
+    else process.env.SUPABASE_URL = previousUrl
+    if (previousKey === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY
+    else process.env.SUPABASE_SERVICE_ROLE_KEY = previousKey
   })
 })
 

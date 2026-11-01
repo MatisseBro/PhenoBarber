@@ -1,8 +1,11 @@
 /**
  * Import clients depuis un CSV dans Supabase
  *
- * Usage :
+ * Aperçu sans écriture :
  *   npx tsx scripts/import-clients.ts chemin/vers/clients.csv
+ *
+ * Application volontaire :
+ *   PHENO_ALLOW_CLIENT_IMPORT=true npx tsx scripts/import-clients.ts chemin/vers/clients.csv --apply --target-ref=<project-ref>
  *
  * Format CSV attendu (première ligne = en-têtes) :
  *   nom,email,telephone
@@ -14,24 +17,40 @@
 
 import fs from 'fs'
 import readline from 'readline'
-import { createClient } from '@supabase/supabase-js'
 import { randomUUID } from 'crypto'
+import { getSupabase } from '../lib/supabase'
 
-const SUPABASE_URL  = process.env.SUPABASE_URL
-const SERVICE_KEY   = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-if (!SUPABASE_URL || !SERVICE_KEY) {
-  console.error('❌  SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY sont requis.')
-  process.exit(1)
-}
-
-const sb = createClient(SUPABASE_URL, SERVICE_KEY)
-
-const FILE = process.argv[2]
+const args = process.argv.slice(2)
+const FILE = args.find(value => !value.startsWith('--'))
+const apply = args.includes('--apply')
+const targetRef = args.find(value => value.startsWith('--target-ref='))?.slice('--target-ref='.length)
 if (!FILE) {
   console.error('❌  Usage : npx tsx scripts/import-clients.ts <fichier.csv>')
   process.exit(1)
 }
+const inputFile = FILE
+
+if (apply && (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY)) {
+  console.error('❌  SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY sont requis pour appliquer un import.')
+  process.exit(1)
+}
+
+let configuredRef = ''
+if (apply) {
+  try {
+    configuredRef = new URL(process.env.SUPABASE_URL!).hostname.split('.')[0]
+  } catch {
+    console.error('❌  Cible Supabase invalide.')
+    process.exit(1)
+  }
+}
+
+if (apply && (process.env.PHENO_ALLOW_CLIENT_IMPORT !== 'true' || !targetRef || targetRef !== configuredRef)) {
+  console.error('❌  Import refusé : --apply, PHENO_ALLOW_CLIENT_IMPORT=true et --target-ref exact sont requis.')
+  process.exit(1)
+}
+
+const sb = apply ? getSupabase() : null
 
 function normalize(headers: string[]): (row: string[]) => { nom: string; email: string; telephone: string } {
   const h = headers.map(h => h.toLowerCase().trim().replace(/[^a-z_]/g, ''))
@@ -56,7 +75,7 @@ function normalize(headers: string[]): (row: string[]) => { nom: string; email: 
 }
 
 async function run() {
-  const rl = readline.createInterface({ input: fs.createReadStream(FILE), crlfDelay: Infinity })
+  const rl = readline.createInterface({ input: fs.createReadStream(inputFile), crlfDelay: Infinity })
 
   let headers: string[] = []
   let mapper: ReturnType<typeof normalize> | null = null
@@ -76,7 +95,12 @@ async function run() {
     const { nom, email, telephone } = mapper(row)
     if (!email && !telephone) { skipped++; continue }
 
-    const { error } = await sb.from('clients').upsert([{
+    if (!apply) {
+      inserted++
+      continue
+    }
+
+    const { error } = await sb!.from('clients').upsert([{
       id: randomUUID(),
       nom,
       email: email || null,
@@ -86,7 +110,7 @@ async function run() {
     }], { onConflict: 'email', ignoreDuplicates: false })
 
     if (error) {
-      console.warn(`⚠️  Skipped (${nom}): ${error.message}`)
+      console.warn('⚠️  Échec de l’import d’une fiche client')
       errors++
     } else {
       inserted++
@@ -94,7 +118,8 @@ async function run() {
     }
   }
 
-  console.log(`\n✅  Import terminé : ${inserted} insérés / ${skipped} ignorés (sans contact) / ${errors} erreurs`)
+  const mode = apply ? 'Import terminé' : 'Aperçu terminé sans écriture'
+  console.log(`\n✅  ${mode} : ${inserted} valides / ${skipped} ignorés (sans contact) / ${errors} erreurs`)
 }
 
-run().catch(err => { console.error('❌  Erreur fatale :', err); process.exit(1) })
+run().catch(() => { console.error('❌  Erreur fatale lors de l’import client'); process.exit(1) })

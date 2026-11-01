@@ -33,13 +33,13 @@ describe('calculatePrice', () => {
   })
 
   it('horaire 2h → 20 HT / 24 TTC', () => {
-    const r = calculatePrice('horaire', 'aucun', '2026-07-10', undefined, '09:00', '11:00')
+    const r = calculatePrice('horaire', 'aucun', '2026-07-10', undefined, '10:00', '12:00')
     expect(r!.totalHT).toBe(20)
     expect(r!.totalTTC).toBe(24)
   })
 
   it('horaire 2h30 → 25 HT', () => {
-    const r = calculatePrice('horaire', 'aucun', '2026-07-10', undefined, '09:00', '11:30')
+    const r = calculatePrice('horaire', 'aucun', '2026-07-10', undefined, '10:00', '12:30')
     expect(r!.totalHT).toBe(25)
   })
 
@@ -105,24 +105,23 @@ describe('calculatePrice', () => {
 
   // ── Mois ───────────────────────────────────────────────────────────────────
 
-  it('mois 30 jours sans pack → 1650 HT', () => {
+  it('mois sur 30 jours calendaires facture les 22 jours ouvrés', () => {
     const r = calculatePrice('mois', 'aucun', '2026-07-01', '2026-07-30')
-    expect(r!.nbJours).toBe(30)
-    expect(r!.totalHT).toBe(1650)        // 30 × 55
+    expect(r!.nbJours).toBe(22)
+    expect(r!.totalHT).toBe(1210)        // 22 × 55
     expect(r!.acompte).toBeCloseTo(r!.totalTTC * 0.25, 2)
   })
 
-  it('mois 30 jours pack premium → 2550 HT', () => {
+  it('mois sur 30 jours avec pack premium facture les 22 jours ouvrés', () => {
     const r = calculatePrice('mois', 'premium', '2026-07-01', '2026-07-30')
-    expect(r!.totalHT).toBe(2550)        // 30×55 + 30×30
+    expect(r!.totalHT).toBe(1870)        // 22×55 + 22×30
   })
 
   // ── Arrondi r2 ────────────────────────────────────────────────────────────
 
-  it('résultats arrondis à 2 décimales', () => {
+  it('rejette les horaires hors des créneaux de 30 minutes', () => {
     const r = calculatePrice('horaire', 'aucun', '2026-07-10', undefined, '10:00', '11:20')
-    // 1h20 = 1.333... × 10 = 13.333... → arrondi
-    expect(r!.totalHT).toBe(13.33)
+    expect(r).toBeNull()
   })
 
 })
