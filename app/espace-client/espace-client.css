@@ -1,0 +1,294 @@
+/* espace-client.css */
+
+.ec-page {
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem 4rem;
+}
+
+.ec-back {
+  align-self: flex-start;
+  margin-bottom: 1.5rem;
+  font-size: .85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  transition: color .2s;
+}
+.ec-back:hover { color: var(--text); }
+
+.ec-logo {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: .08em;
+  color: var(--yellow);
+  margin-bottom: .25rem;
+  text-align: center;
+}
+
+.ec-heading {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  margin-bottom: .4rem;
+}
+
+.ec-sub {
+  font-size: .88rem;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 360px;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+/* ── REQUEST FORM ── */
+.ec-form-wrap {
+  width: 100%;
+  max-width: 400px;
+}
+
+.ec-input-row {
+  display: flex;
+  gap: .6rem;
+  margin-bottom: .75rem;
+}
+
+.ec-input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: .95rem;
+  padding: .7rem 1rem;
+  outline: none;
+  transition: border-color .2s;
+}
+.ec-input:focus { border-color: var(--yellow); }
+.ec-input::placeholder { color: var(--text-muted); }
+
+.ec-btn-send {
+  background: var(--yellow);
+  color: #000;
+  font-weight: 700;
+  font-size: .9rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: .7rem 1.2rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .2s, opacity .2s;
+}
+.ec-btn-send:hover { background: var(--yellow-hover); }
+.ec-btn-send:disabled { opacity: .5; cursor: not-allowed; }
+
+.ec-msg {
+  font-size: .83rem;
+  text-align: center;
+  padding: .65rem 1rem;
+  border-radius: var(--radius-xs);
+  margin-bottom: .75rem;
+}
+.ec-msg.success {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success);
+}
+.ec-msg.error {
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: var(--error);
+}
+
+/* ── SENT STATE ── */
+.ec-sent-box {
+  width: 100%;
+  max-width: 400px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 2rem;
+  text-align: center;
+}
+.ec-sent-icon { font-size: 2.5rem; margin-bottom: .75rem; }
+.ec-sent-title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: .5rem; }
+.ec-sent-desc { font-size: .85rem; color: var(--text-muted); line-height: 1.65; }
+.ec-sent-desc strong { color: var(--text-light); }
+
+/* ── AUTHENTICATED PORTAL ── */
+.ec-portal {
+  width: 100%;
+  max-width: 560px;
+}
+
+.ec-portal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+.ec-portal-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+}
+.ec-portal-email {
+  font-size: .78rem;
+  color: var(--text-muted);
+  background: var(--bg-card2);
+  padding: .3rem .75rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.ec-section-label {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 1.5rem 0 .7rem;
+}
+
+.ec-booking-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  margin-bottom: .75rem;
+  position: relative;
+}
+.ec-booking-card.upcoming {
+  border-color: rgba(201, 168, 76, .3);
+  background: rgba(201, 168, 76, .04);
+}
+
+.ec-booking-date {
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--yellow);
+  text-transform: capitalize;
+  margin-bottom: .25rem;
+}
+.ec-booking-card.past .ec-booking-date { color: var(--text-muted); }
+
+.ec-booking-svc {
+  font-size: .95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: .2rem;
+}
+
+.ec-booking-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem .8rem;
+  font-size: .78rem;
+  color: var(--text-muted);
+  margin-top: .4rem;
+}
+.ec-booking-badge {
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: .15rem .5rem;
+  font-size: .73rem;
+  color: var(--text-light);
+}
+
+.ec-rebook-btn {
+  display: inline-block;
+  margin-top: .75rem;
+  font-size: .8rem;
+  font-weight: 700;
+  color: #000;
+  background: var(--yellow);
+  border: none;
+  border-radius: 6px;
+  padding: .35rem .9rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .2s;
+}
+.ec-rebook-btn:hover { background: var(--yellow-hover); }
+
+.ec-empty {
+  font-size: .85rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--bg-card);
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius);
+}
+
+.ec-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 0;
+  color: var(--text-muted);
+  font-size: .9rem;
+}
+.ec-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--border-light);
+  border-top-color: var(--yellow);
+  border-radius: 50%;
+  animation: ec-spin .8s linear infinite;
+}
+@keyframes ec-spin { to { transform: rotate(360deg); } }
+
+.ec-token-error {
+  width: 100%;
+  max-width: 400px;
+  background: var(--error-bg);
+  border: 1.5px solid var(--error-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  text-align: center;
+}
+.ec-token-error-title { font-weight: 700; color: var(--error); margin-bottom: .5rem; }
+.ec-token-error-desc { font-size: .85rem; color: var(--text-muted); margin-bottom: 1rem; }
+.ec-btn-retry {
+  display: inline-block;
+  font-size: .85rem;
+  font-weight: 700;
+  color: #000;
+  background: var(--yellow);
+  border: none;
+  border-radius: 6px;
+  padding: .4rem 1rem;
+  cursor: pointer;
+  transition: background .2s;
+}
+.ec-btn-retry:hover { background: var(--yellow-hover); }
+
+@media (max-width: 480px) {
+  .ec-input-row { flex-direction: column; }
+  .ec-portal-header { flex-direction: column; align-items: flex-start; }
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

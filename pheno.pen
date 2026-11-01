@@ -1,0 +1,3058 @@
+{
+  "version": "2.13",
+  "children": [
+    {
+      "type": "frame",
+      "id": "bi8Au",
+      "x": 0,
+      "y": 0,
+      "name": "Frame",
+      "clip": true,
+      "width": 800,
+      "height": 600,
+      "fill": "#FFFFFF",
+      "layout": "none"
+    },
+    {
+      "type": "frame",
+      "id": "P2HoKx",
+      "x": 900,
+      "y": 0,
+      "name": "Page 1 - Landing",
+      "clip": true,
+      "width": 1440,
+      "fill": "#000000",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "hDJf0",
+          "name": "Nav",
+          "width": "fill_container",
+          "height": 64,
+          "fill": "#000000",
+          "padding": [
+            0,
+            48
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "TqyjM",
+              "name": "Nav Logo",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "x94zX",
+                  "name": "Logo Pheno",
+                  "fill": "#FDE047",
+                  "content": "PHENO",
+                  "fontFamily": "Bebas Neue",
+                  "fontSize": 24,
+                  "fontWeight": "normal",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "text",
+                  "id": "w19BI",
+                  "name": "Logo Barber",
+                  "fill": "#FFFFFF",
+                  "content": "BARBER",
+                  "fontFamily": "Bebas Neue",
+                  "fontSize": 24,
+                  "fontWeight": "normal",
+                  "letterSpacing": 2
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "wR4Vd",
+              "name": "Nav Links",
+              "gap": 48,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "FOMFf",
+                  "name": "Nav PRESTATIONS",
+                  "fill": "#FFFFFF",
+                  "content": "PRESTATIONS",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "text",
+                  "id": "q1WIW4",
+                  "name": "Nav GALERIE",
+                  "fill": "#FFFFFF",
+                  "content": "GALERIE",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "text",
+                  "id": "KteFA",
+                  "name": "Nav CONTACT",
+                  "fill": "#FFFFFF",
+                  "content": "CONTACT",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "500",
+                  "letterSpacing": 2
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "khLeM",
+              "name": "Nav Right",
+              "gap": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "zSQUG",
+                  "name": "Nav CTA Btn",
+                  "fill": "#FDE047",
+                  "padding": [
+                    10,
+                    24
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MGQoW",
+                      "name": "Nav CTA Text",
+                      "fill": "#000000",
+                      "content": "RÉSERVER",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "500",
+                      "letterSpacing": 2
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "JvZJU",
+                  "name": "Nav Rent Link",
+                  "fill": "#FFFFFF",
+                  "content": "Louer un fauteuil",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Q1Z23",
+          "name": "Hero",
+          "width": "fill_container",
+          "height": 860,
+          "fill": "#000000",
+          "layout": "none",
+          "children": [
+            {
+              "type": "rectangle",
+              "id": "W0dLC",
+              "x": 120,
+              "y": 330,
+              "name": "Hero Yellow Line",
+              "fill": "#FDE047",
+              "width": 2,
+              "height": 120
+            },
+            {
+              "type": "frame",
+              "id": "i2LbI",
+              "x": 160,
+              "y": 220,
+              "name": "Hero Content",
+              "width": 880,
+              "layout": "vertical",
+              "gap": 28,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "FjIxB",
+                  "name": "Hero Headline",
+                  "fill": "#FFFFFF",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "LE STYLE,\nC'EST SÉRIEUX.",
+                  "lineHeight": 0.95,
+                  "fontFamily": "Bebas Neue",
+                  "fontSize": 120,
+                  "fontWeight": "normal",
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "C7cMqG",
+                  "name": "Hero Sub",
+                  "fill": "#888888",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Barbershop premium à Montpellier. Coupe, barbe, soin — par des mains qui savent.",
+                  "lineHeight": 1.7,
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "frame",
+                  "id": "O6q5L",
+                  "name": "Hero Buttons",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "b8FioY",
+                      "name": "Hero Btn Reserve",
+                      "fill": "#FDE047",
+                      "padding": [
+                        18,
+                        40
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RyLw7",
+                          "name": "Btn Reserve Text",
+                          "fill": "#000000",
+                          "content": "RÉSERVER",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "500",
+                          "letterSpacing": 3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "pPEN1",
+                      "name": "Hero Btn Rent",
+                      "stroke": "#FFFFFF",
+                      "strokeWidth": 1,
+                      "padding": [
+                        17,
+                        39
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ykhFL",
+                          "name": "Btn Rent Text",
+                          "fill": "#FFFFFF",
+                          "content": "LOUER UN FAUTEUIL",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "500",
+                          "letterSpacing": 3
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qVBHU",
+              "x": 680,
+              "y": 790,
+              "name": "Hero Scroll",
+              "layout": "vertical",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "tjolf",
+                  "name": "Scroll Text",
+                  "fill": "#FDE047",
+                  "content": "SCROLL",
+                  "fontFamily": "Inter",
+                  "fontSize": 10,
+                  "letterSpacing": 4
+                },
+                {
+                  "type": "rectangle",
+                  "id": "xxURR",
+                  "name": "Scroll Arrow",
+                  "fill": "#FDE047",
+                  "width": 1,
+                  "height": 24
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Cw5Mq",
+          "name": "Section Services",
+          "width": "fill_container",
+          "fill": "#111111",
+          "layout": "vertical",
+          "gap": 56,
+          "padding": [
+            100,
+            120
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "ZtikD",
+              "name": "Services Eyebrow",
+              "fill": "#FDE047",
+              "content": "NOS PRESTATIONS",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "Y9cnh",
+              "name": "Services H2",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "CE QU'ON FAIT, ON LE FAIT BIEN",
+              "fontFamily": "Bebas Neue",
+              "fontSize": 64,
+              "fontWeight": "normal",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "fdq74",
+              "name": "Services Cards",
+              "width": "fill_container",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "U6xaD",
+                  "name": "COUPE Card",
+                  "width": "fill_container",
+                  "fill": "#1A1A1A",
+                  "stroke": "#2A2A2A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 40,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "BaHWs",
+                      "name": "COUPE Num",
+                      "fill": "#FDE047",
+                      "content": "01",
+                      "lineHeight": 0.9,
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 80,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Py1zc",
+                      "name": "COUPE Title",
+                      "fill": "#FFFFFF",
+                      "content": "COUPE",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 32,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "A73Pls",
+                      "name": "COUPE Divider",
+                      "fill": "#2A2A2A",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "DHCdP",
+                      "name": "COUPE Price",
+                      "fill": "#FFFFFF",
+                      "content": "À partir de 25€",
+                      "fontFamily": "Inter",
+                      "fontSize": 16
+                    },
+                    {
+                      "type": "text",
+                      "id": "Yac2G",
+                      "name": "COUPE Desc",
+                      "fill": "#888888",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Coupe homme, dégradé ou classique. Finition rasoir et styling inclus.",
+                      "lineHeight": 1.7,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "300"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dJVLV",
+                  "name": "BARBE Card",
+                  "width": "fill_container",
+                  "fill": "#1A1A1A",
+                  "stroke": "#2A2A2A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 40,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "OCtxT",
+                      "name": "BARBE Num",
+                      "fill": "#FDE047",
+                      "content": "02",
+                      "lineHeight": 0.9,
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 80,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "vDFro",
+                      "name": "BARBE Title",
+                      "fill": "#FFFFFF",
+                      "content": "BARBE",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 32,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "B6wZe",
+                      "name": "BARBE Divider",
+                      "fill": "#2A2A2A",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "AzhVJ",
+                      "name": "BARBE Price",
+                      "fill": "#FFFFFF",
+                      "content": "À partir de 15€",
+                      "fontFamily": "Inter",
+                      "fontSize": 16
+                    },
+                    {
+                      "type": "text",
+                      "id": "b9SsQX",
+                      "name": "BARBE Desc",
+                      "fill": "#888888",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Taille, mise en forme et soin complet de la barbe à la mousse chaude.",
+                      "lineHeight": 1.7,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "300"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zHX5i",
+                  "name": "COUPE + BARBE Card",
+                  "width": "fill_container",
+                  "fill": "#1A1A1A",
+                  "stroke": "#2A2A2A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 40,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yEeef",
+                      "name": "COUPE + BARBE Num",
+                      "fill": "#FDE047",
+                      "content": "03",
+                      "lineHeight": 0.9,
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 80,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "d7TnzO",
+                      "name": "COUPE + BARBE Title",
+                      "fill": "#FFFFFF",
+                      "content": "COUPE + BARBE",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 32,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "X2Xsr",
+                      "name": "COUPE + BARBE Divider",
+                      "fill": "#2A2A2A",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "R0uJQ",
+                      "name": "COUPE + BARBE Price",
+                      "fill": "#FFFFFF",
+                      "content": "À partir de 35€",
+                      "fontFamily": "Inter",
+                      "fontSize": 16
+                    },
+                    {
+                      "type": "text",
+                      "id": "paJC4",
+                      "name": "COUPE + BARBE Desc",
+                      "fill": "#888888",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "La formule complète. Résultat premium garanti, prise en charge totale.",
+                      "lineHeight": 1.7,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "300"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "SHxxG",
+          "name": "Section Why Pheno",
+          "width": "fill_container",
+          "fill": "#000000",
+          "layout": "vertical",
+          "gap": 64,
+          "padding": [
+            100,
+            120
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "ADv6A",
+              "name": "Why H2",
+              "fill": "#FFFFFF",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "POURQUOI PHENO BARBER ?",
+              "fontFamily": "Bebas Neue",
+              "fontSize": 64,
+              "fontWeight": "normal",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "wOGE1",
+              "name": "Why Columns",
+              "width": "fill_container",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "RxmUN",
+                  "name": "100% SATISFACTION",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    0,
+                    48
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vKWs8",
+                      "name": "100% SATISFACTION Title",
+                      "fill": "#FDE047",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "100% SATISFACTION",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 32,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "Epb7Q",
+                      "name": "100% SATISFACTION Sub",
+                      "fill": "#FFFFFF",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Ou on recommence. Sans discussion.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "300"
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "CFTau",
+                  "name": "Why Sep 0",
+                  "fill": "#FDE047",
+                  "width": 1,
+                  "height": 80
+                },
+                {
+                  "type": "frame",
+                  "id": "cBSAI",
+                  "name": "RÉSERVATION EN LIGNE",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    0,
+                    48
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yWLoL",
+                      "name": "RÉSERVATION EN LIGNE Title",
+                      "fill": "#FDE047",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "RÉSERVATION EN LIGNE",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 32,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "ghnzq",
+                      "name": "RÉSERVATION EN LIGNE Sub",
+                      "fill": "#FFFFFF",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Simple, rapide, disponible 24h/24.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "300"
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "RcHO0",
+                  "name": "Why Sep 1",
+                  "fill": "#FDE047",
+                  "width": 1,
+                  "height": 80
+                },
+                {
+                  "type": "frame",
+                  "id": "i961Sj",
+                  "name": "MONTPELLIER",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": [
+                    0,
+                    48
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "TC2ol",
+                      "name": "MONTPELLIER Title",
+                      "fill": "#FDE047",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "MONTPELLIER",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 32,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "JznJk",
+                      "name": "MONTPELLIER Sub",
+                      "fill": "#FFFFFF",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Cœur de ville, facile d'accès.",
+                      "lineHeight": 1.6,
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "300"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "X1j7fs",
+          "name": "Section Galerie",
+          "width": "fill_container",
+          "fill": "#111111",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": [
+            100,
+            120
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "KIbzz",
+              "name": "Gallery Eyebrow",
+              "fill": "#FDE047",
+              "content": "RÉALISATIONS",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "K5txPp",
+              "name": "Gallery H2",
+              "fill": "#FFFFFF",
+              "content": "NOS COUPES PARLENT",
+              "fontFamily": "Bebas Neue",
+              "fontSize": 64,
+              "fontWeight": "normal",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "WtFLT",
+              "name": "Gallery Grid",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hGST7",
+                  "name": "Gallery Row 1",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "xJ3kr",
+                      "name": "Photo 1",
+                      "fill": "#2A2A2A",
+                      "width": "fill_container",
+                      "height": 340
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "rx9fN",
+                      "name": "Photo 2",
+                      "fill": "#2A2A2A",
+                      "width": "fill_container",
+                      "height": 340
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "TMTpU",
+                      "name": "Photo 3",
+                      "fill": "#2A2A2A",
+                      "width": "fill_container",
+                      "height": 340
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "y4JnI",
+                  "name": "Gallery Row 2",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "kp60G",
+                      "name": "Photo 4",
+                      "fill": "#2A2A2A",
+                      "width": "fill_container",
+                      "height": 340
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "MNARx",
+                      "name": "Photo 5",
+                      "fill": "#2A2A2A",
+                      "width": "fill_container",
+                      "height": 340
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "Zy4FR",
+                      "name": "Photo 6",
+                      "fill": "#2A2A2A",
+                      "width": "fill_container",
+                      "height": 340
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "L4661E",
+          "name": "Section CTA Resa",
+          "width": "fill_container",
+          "fill": "#FDE047",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": 120,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "QJO7t",
+              "name": "CTA H2",
+              "fill": "#000000",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "PRÊT À VOUS\nTRANSFORMER ?",
+              "lineHeight": 0.95,
+              "textAlign": "center",
+              "fontFamily": "Bebas Neue",
+              "fontSize": 88,
+              "fontWeight": "normal",
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "PsqcS",
+              "name": "CTA Sub",
+              "fill": "#000000",
+              "content": "Réservez votre créneau en moins de 2 minutes.",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 18
+            },
+            {
+              "type": "frame",
+              "id": "UolUA",
+              "name": "CTA Button",
+              "fill": "#000000",
+              "padding": [
+                18,
+                48
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "b3r3A",
+                  "name": "CTA Btn Text",
+                  "fill": "#FFFFFF",
+                  "content": "RÉSERVER MAINTENANT →",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "500",
+                  "letterSpacing": 3
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "bZGzK",
+              "name": "CTA Phone Link",
+              "fill": "#000000",
+              "content": "Ou appelez-nous directement",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "FMTYE",
+          "name": "Section Contact",
+          "width": "fill_container",
+          "fill": "#000000",
+          "layout": "vertical",
+          "gap": 56,
+          "padding": [
+            100,
+            120
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "XEeMB",
+              "name": "Contact Eyebrow",
+              "fill": "#FDE047",
+              "content": "NOUS TROUVER",
+              "fontFamily": "Inter",
+              "fontSize": 11,
+              "letterSpacing": 3
+            },
+            {
+              "type": "text",
+              "id": "HWvZw",
+              "name": "Contact H2",
+              "fill": "#FFFFFF",
+              "content": "VENEZ NOUS VOIR",
+              "fontFamily": "Bebas Neue",
+              "fontSize": 64,
+              "fontWeight": "normal",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "AXpcj",
+              "name": "Contact Cols",
+              "width": "fill_container",
+              "gap": 80,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "O1wSY",
+                  "name": "Contact Info",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 20,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "fE9E2",
+                      "name": "Info 12 Rue de la République",
+                      "fill": "#FFFFFF",
+                      "content": "12 Rue de la République",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "BUayh",
+                      "name": "Info Montpellier 34000",
+                      "fill": "#888888",
+                      "content": "Montpellier 34000",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "BHWTT",
+                      "name": "Info Mar – Sam : 9h – 19h",
+                      "fill": "#888888",
+                      "content": "Mar – Sam : 9h – 19h",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ZfdDC",
+                      "name": "Info 04 67 XX XX XX",
+                      "fill": "#888888",
+                      "content": "04 67 XX XX XX",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "300"
+                    },
+                    {
+                      "type": "text",
+                      "id": "zVlfx",
+                      "name": "Info contact@phenobarber.fr",
+                      "fill": "#888888",
+                      "content": "contact@phenobarber.fr",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "300"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gBo44",
+                  "name": "Map Block",
+                  "width": "fill_container",
+                  "height": 280,
+                  "fill": "#1A1A1A",
+                  "stroke": "#2A2A2A",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "oWP17",
+                      "name": "Map Placeholder",
+                      "fill": "#555555",
+                      "content": "Carte Google Maps",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "nrqkg",
+              "name": "Contact Sep",
+              "fill": "#2A2A2A",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "text",
+              "id": "PnJfB",
+              "name": "Form Title",
+              "fill": "#FFFFFF",
+              "content": "NOUS ÉCRIRE",
+              "fontFamily": "Bebas Neue",
+              "fontSize": 32,
+              "fontWeight": "normal",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "Q0ONY",
+              "name": "Contact Form",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "MVYYS",
+                  "name": "Form Row 1",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Dm6fE",
+                      "name": "Votre prénom Wrap",
+                      "width": "fill_container",
+                      "height": 52,
+                      "fill": "#1A1A1A",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": 1,
+                      "padding": [
+                        0,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "vhAzE",
+                          "name": "Votre prénom",
+                          "fill": "#555555",
+                          "content": "Votre prénom",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "300"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kJKKZ",
+                      "name": "Votre nom Wrap",
+                      "width": "fill_container",
+                      "height": 52,
+                      "fill": "#1A1A1A",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": 1,
+                      "padding": [
+                        0,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "t3CKm",
+                          "name": "Votre nom",
+                          "fill": "#555555",
+                          "content": "Votre nom",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "300"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "bQhec",
+                  "name": "Form Row 2",
+                  "width": "fill_container",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "OuJeA",
+                      "name": "Votre email Wrap",
+                      "width": "fill_container",
+                      "height": 52,
+                      "fill": "#1A1A1A",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": 1,
+                      "padding": [
+                        0,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ZFmiH",
+                          "name": "Votre email",
+                          "fill": "#555555",
+                          "content": "Votre email",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "300"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "g2LLNP",
+                      "name": "Votre téléphone Wrap",
+                      "width": "fill_container",
+                      "height": 52,
+                      "fill": "#1A1A1A",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": 1,
+                      "padding": [
+                        0,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "AEUdJ",
+                          "name": "Votre téléphone",
+                          "fill": "#555555",
+                          "content": "Votre téléphone",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "300"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "m98vSQ",
+                  "name": "Message Field",
+                  "width": "fill_container",
+                  "height": 120,
+                  "fill": "#1A1A1A",
+                  "stroke": "#2A2A2A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "zg9mo",
+                      "name": "Message Placeholder",
+                      "fill": "#555555",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Votre message…",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "300"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "P531R",
+                  "name": "Send Button",
+                  "fill": "#FDE047",
+                  "padding": [
+                    16,
+                    40
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "kwSTh",
+                      "name": "Send Btn Text",
+                      "fill": "#000000",
+                      "content": "ENVOYER",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500",
+                      "letterSpacing": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ZD8k3",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "#000000",
+          "stroke": "#2A2A2A",
+          "strokeWidth": {
+            "top": 1
+          },
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            48,
+            120
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "wMz8k",
+              "name": "Footer Top",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "rVpeh",
+                  "name": "Footer Logo Block",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "QmGeB",
+                      "name": "Footer Logo Row",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "AOCPN",
+                          "name": "Footer Pheno",
+                          "fill": "#FDE047",
+                          "content": "PHENO",
+                          "fontFamily": "Bebas Neue",
+                          "fontSize": 22,
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "dYxAk",
+                          "name": "Footer Barber",
+                          "fill": "#FFFFFF",
+                          "content": "BARBER",
+                          "fontFamily": "Bebas Neue",
+                          "fontSize": 22,
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "WjoZ1",
+                      "name": "Footer Tagline",
+                      "fill": "#888888",
+                      "content": "Barbershop premium · Montpellier",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "300"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "RphcM",
+                  "name": "Footer Nav",
+                  "gap": 32,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "jk4Zg",
+                      "name": "Footer Accueil",
+                      "fill": "#888888",
+                      "content": "Accueil",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "EUGTy",
+                      "name": "Footer Prestations",
+                      "fill": "#888888",
+                      "content": "Prestations",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "IETPO",
+                      "name": "Footer Location fauteuil",
+                      "fill": "#888888",
+                      "content": "Location fauteuil",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "QxuDW",
+                      "name": "Footer Contact",
+                      "fill": "#888888",
+                      "content": "Contact",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Q5WV1M",
+                  "name": "Footer Social",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "z35cAP",
+                      "name": "IG Icon",
+                      "width": 36,
+                      "height": 36,
+                      "stroke": "#555555",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "YwHEr",
+                          "name": "IG Label",
+                          "fill": "#888888",
+                          "content": "IG",
+                          "fontFamily": "Inter",
+                          "fontSize": 10,
+                          "fontWeight": "500",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "VSJCp",
+                      "name": "TT Icon",
+                      "width": 36,
+                      "height": 36,
+                      "stroke": "#555555",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ajUN7",
+                          "name": "TT Label",
+                          "fill": "#888888",
+                          "content": "TT",
+                          "fontFamily": "Inter",
+                          "fontSize": 10,
+                          "fontWeight": "500",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "H9TU7",
+              "name": "Footer Divider",
+              "fill": "#2A2A2A",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "L1izx",
+              "name": "Footer Bottom",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "SIyQD",
+                  "name": "Footer Copyright",
+                  "fill": "#888888",
+                  "content": "© 2026 Pheno Barber — Montpellier",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "text",
+                  "id": "w8F9F",
+                  "name": "Footer Legal",
+                  "fill": "#888888",
+                  "content": "Mentions légales",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "wmrBg",
+      "x": 2440,
+      "y": 0,
+      "name": "Page 2 - Location Fauteuil",
+      "clip": true,
+      "width": 1440,
+      "fill": "#000000",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "DYGvH",
+          "name": "Hero Breadcrumb",
+          "clip": true,
+          "width": "fill_container",
+          "height": 360,
+          "fill": "#000000",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "mTVFM",
+              "layoutPosition": "absolute",
+              "x": 120,
+              "y": 48,
+              "name": "Breadcrumb Row",
+              "width": 1200,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "xHeiL",
+                  "name": "Breadcrumb",
+                  "fill": "#FDE047",
+                  "content": "ACCUEIL  ›  LOCATION DE FAUTEUIL",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "letterSpacing": 3
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "N5wHcY",
+              "name": "Hero Inner",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 24,
+              "padding": [
+                80,
+                120,
+                40,
+                120
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "eh0An",
+                  "name": "H1 Hero",
+                  "fill": "#FFFFFF",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "LOUEZ VOTRE FAUTEUIL CHEZ PHENO",
+                  "fontFamily": "Bebas Neue",
+                  "fontSize": 88,
+                  "fontWeight": "normal",
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "GLXwG",
+                  "name": "Hero Description",
+                  "fill": "#888888",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Vous êtes barbier ou coiffeur indépendant ? Installez-vous dans notre espace premium à Montpellier.",
+                  "lineHeight": 1.7,
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "300"
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "pdJwF",
+              "layoutPosition": "absolute",
+              "x": 0,
+              "y": 359,
+              "name": "Hero Deco Line",
+              "fill": "#FDE047",
+              "width": 1440,
+              "height": 1
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "k5Vj9",
+          "name": "Section Avantages",
+          "width": "fill_container",
+          "fill": "#111111",
+          "layout": "vertical",
+          "gap": 56,
+          "padding": [
+            100,
+            120
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "bNSEx",
+              "name": "Avantages Header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XoipK",
+                  "name": "Avantages Eyebrow",
+                  "fill": "#FDE047",
+                  "content": "ESPACE PROFESSIONNEL",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "Mz3nk",
+                  "name": "Avantages H2",
+                  "fill": "#FFFFFF",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "UN ESPACE FAIT POUR LES PROS",
+                  "fontFamily": "Bebas Neue",
+                  "fontSize": 64,
+                  "fontWeight": "normal",
+                  "letterSpacing": 2
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "WPxOs",
+              "name": "Avantages Cards",
+              "width": "fill_container",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "NQJbZ",
+                  "name": "ESPACE ÉQUIPÉ",
+                  "width": "fill_container",
+                  "fill": "#1A1A1A",
+                  "stroke": "#2A2A2A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 40,
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "TEk2x",
+                      "name": "Icon Bar",
+                      "fill": "#FDE047",
+                      "width": 32,
+                      "height": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "p8RRS",
+                      "name": "Card Title",
+                      "fill": "#FFFFFF",
+                      "content": "ESPACE ÉQUIPÉ",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 28,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "SSDfc",
+                      "name": "Card Desc",
+                      "fill": "#888888",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Fauteuil professionnel, miroir haut de gamme, éclairage parfait. Tout ce qu'il faut pour travailler dans les meilleures conditions.",
+                      "lineHeight": 1.7,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "300"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "JvaaW",
+                  "name": "LOCALISATION CENTRALE",
+                  "width": "fill_container",
+                  "fill": "#1A1A1A",
+                  "stroke": "#2A2A2A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 40,
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "LU4YW",
+                      "name": "Icon Bar",
+                      "fill": "#FDE047",
+                      "width": 32,
+                      "height": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "Ped1q",
+                      "name": "Card Title",
+                      "fill": "#FFFFFF",
+                      "content": "LOCALISATION CENTRALE",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 28,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "OwOs1",
+                      "name": "Card Desc",
+                      "fill": "#888888",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "En plein cœur de Montpellier. Fort flux de clientèle, transport en commun, visibilité maximale.",
+                      "lineHeight": 1.7,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "300"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "FEFVc",
+                  "name": "FLEXIBILITÉ TOTALE",
+                  "width": "fill_container",
+                  "fill": "#1A1A1A",
+                  "stroke": "#2A2A2A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 20,
+                  "padding": 40,
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "vrviQ",
+                      "name": "Icon Bar",
+                      "fill": "#FDE047",
+                      "width": 32,
+                      "height": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "LowsZ",
+                      "name": "Card Title",
+                      "fill": "#FFFFFF",
+                      "content": "FLEXIBILITÉ TOTALE",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 28,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "M4mESN",
+                      "name": "Card Desc",
+                      "fill": "#888888",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Louez à la journée, à la semaine ou au mois. Formules adaptées à votre activité, sans engagement long terme.",
+                      "lineHeight": 1.7,
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "300"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "YZO0k",
+          "name": "Section Tarifs",
+          "width": "fill_container",
+          "fill": "#000000",
+          "layout": "vertical",
+          "gap": 56,
+          "padding": [
+            100,
+            120
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "l3gUH",
+              "name": "Tarifs Header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "lPsEr",
+                  "name": "Tarifs Eyebrow",
+                  "fill": "#FDE047",
+                  "content": "FORMULES DE LOCATION",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "letterSpacing": 3
+                },
+                {
+                  "type": "text",
+                  "id": "KO1zb",
+                  "name": "Tarifs H2",
+                  "fill": "#FFFFFF",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "NOS FORMULES",
+                  "fontFamily": "Bebas Neue",
+                  "fontSize": 64,
+                  "fontWeight": "normal",
+                  "letterSpacing": 2
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "fXRyK",
+              "name": "Tarifs Cards",
+              "width": "fill_container",
+              "gap": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "tuknn",
+                  "name": "JOURNÉE Card",
+                  "width": "fill_container",
+                  "fill": "#1A1A1A",
+                  "stroke": "#2A2A2A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 24,
+                  "padding": 40,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Gl2ue",
+                      "name": "Tarif Name",
+                      "fill": "#FFFFFF",
+                      "content": "JOURNÉE",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 40,
+                      "fontWeight": "normal",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "rJbjx",
+                      "name": "Tarif Price",
+                      "fill": "#FDE047",
+                      "content": "Sur devis",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 32,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "RUUgR",
+                      "name": "Divider",
+                      "fill": "#2A2A2A",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "e4CBXw",
+                      "name": "Includes List",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "SkNrg",
+                          "name": "Include Row",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "zbxJ7",
+                              "name": "Bullet",
+                              "fill": "#FDE047",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "zJagc",
+                              "name": "Include Text",
+                              "fill": "#888888",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Accès au fauteuil dès 9h",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "BI1xH",
+                          "name": "Include Row",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "cUAFt",
+                              "name": "Bullet",
+                              "fill": "#FDE047",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "SkyDT",
+                              "name": "Include Text",
+                              "fill": "#888888",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Matériel de base fourni",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ttz82",
+                          "name": "Include Row",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "odNd9",
+                              "name": "Bullet",
+                              "fill": "#FDE047",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "dqdcq",
+                              "name": "Include Text",
+                              "fill": "#888888",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Wi-Fi haut débit",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "sc321",
+                          "name": "Include Row",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "E3yDvt",
+                              "name": "Bullet",
+                              "fill": "#FDE047",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "k24YS",
+                              "name": "Include Text",
+                              "fill": "#888888",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Parking à proximité",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "KyVNc",
+                  "name": "SEMAINE Card",
+                  "width": "fill_container",
+                  "fill": "#1A1A1A",
+                  "stroke": "#FDE047",
+                  "strokeWidth": 2,
+                  "layout": "vertical",
+                  "gap": 24,
+                  "padding": 40,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "J1QSh7",
+                      "name": "Popular Badge",
+                      "fill": "#FDE047",
+                      "content": "LE PLUS POPULAIRE",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "RtI8a",
+                      "name": "Tarif Name",
+                      "fill": "#FFFFFF",
+                      "content": "SEMAINE",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 40,
+                      "fontWeight": "normal",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "U2pgh",
+                      "name": "Tarif Price",
+                      "fill": "#FDE047",
+                      "content": "Sur devis",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 32,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "qwube",
+                      "name": "Divider",
+                      "fill": "#2A2A2A",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vjsKX",
+                      "name": "Includes List",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "AVZjv",
+                          "name": "Include Row",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "iL0KL",
+                              "name": "Bullet",
+                              "fill": "#FDE047",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "GctJX",
+                              "name": "Include Text",
+                              "fill": "#888888",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Fauteuil dédié 5 jours",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "JOCki",
+                          "name": "Include Row",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "V8NdLN",
+                              "name": "Bullet",
+                              "fill": "#FDE047",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "mj2b8",
+                              "name": "Include Text",
+                              "fill": "#888888",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Rangement personnel sécurisé",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "QATnt",
+                          "name": "Include Row",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "UXyhF",
+                              "name": "Bullet",
+                              "fill": "#FDE047",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "Kng5P",
+                              "name": "Include Text",
+                              "fill": "#888888",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Accès prioritaire aux créneaux",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "TgpUZ",
+                          "name": "Include Row",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "EvCQu",
+                              "name": "Bullet",
+                              "fill": "#FDE047",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "leyqV",
+                              "name": "Include Text",
+                              "fill": "#888888",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Support de l'équipe Pheno",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "HQ1Bb",
+                  "name": "MOIS Card",
+                  "width": "fill_container",
+                  "fill": "#1A1A1A",
+                  "stroke": "#2A2A2A",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 24,
+                  "padding": 40,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "VV028",
+                      "name": "Tarif Name",
+                      "fill": "#FFFFFF",
+                      "content": "MOIS",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 40,
+                      "fontWeight": "normal",
+                      "letterSpacing": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "IeqHT",
+                      "name": "Tarif Price",
+                      "fill": "#FDE047",
+                      "content": "Sur devis",
+                      "fontFamily": "Bebas Neue",
+                      "fontSize": 32,
+                      "fontWeight": "normal",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "hXcP2",
+                      "name": "Divider",
+                      "fill": "#2A2A2A",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "cHiUW",
+                      "name": "Includes List",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ZgdVt",
+                          "name": "Include Row",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "gKWAj",
+                              "name": "Bullet",
+                              "fill": "#FDE047",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "KpeLN",
+                              "name": "Include Text",
+                              "fill": "#888888",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Fauteuil attitré tout le mois",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "J5aMjA",
+                          "name": "Include Row",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "umN7M",
+                              "name": "Bullet",
+                              "fill": "#FDE047",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "yMP5R",
+                              "name": "Include Text",
+                              "fill": "#888888",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Visibilité sur nos réseaux",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ocIVO",
+                          "name": "Include Row",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "IWgrl",
+                              "name": "Bullet",
+                              "fill": "#FDE047",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "eEO1M",
+                              "name": "Include Text",
+                              "fill": "#888888",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Accès en dehors des horaires",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "D7T5h",
+                          "name": "Include Row",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "id": "tLuiI",
+                              "name": "Bullet",
+                              "fill": "#FDE047",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "q0HE1X",
+                              "name": "Include Text",
+                              "fill": "#888888",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Facturation simplifiée",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "eUDzE",
+              "name": "Tarifs CTA Row",
+              "width": "fill_container",
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "L3ALf",
+                  "name": "Contact Button",
+                  "stroke": "#FDE047",
+                  "strokeWidth": 1,
+                  "padding": [
+                    16,
+                    40
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "pw1Ii",
+                      "name": "Contact Button Text",
+                      "fill": "#FDE047",
+                      "content": "NOUS CONTACTER",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "500",
+                      "letterSpacing": 2
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NkSrP",
+          "name": "Section Formulaire",
+          "width": "fill_container",
+          "fill": "#111111",
+          "layout": "vertical",
+          "gap": 48,
+          "padding": [
+            100,
+            120
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "B154ir",
+              "name": "Form Header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "iN7sz",
+                  "name": "Form H2",
+                  "fill": "#FFFFFF",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "INTÉRESSÉ ? PARLONS-EN.",
+                  "fontFamily": "Bebas Neue",
+                  "fontSize": 64,
+                  "fontWeight": "normal",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "text",
+                  "id": "uJTsP",
+                  "name": "Form Subtitle",
+                  "fill": "#888888",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Remplissez ce formulaire, on vous répond sous 24h.",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "300"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "l6kR5L",
+              "name": "Form Body",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "aI4lY",
+                  "name": "Row Prénom Nom",
+                  "width": "fill_container",
+                  "gap": 20,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "k8FwHO",
+                      "name": "PRÉNOM Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "KoWHw",
+                          "name": "PRÉNOM Label",
+                          "fill": "#888888",
+                          "content": "PRÉNOM",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "letterSpacing": 1
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Z2dzKA",
+                          "name": "PRÉNOM Input",
+                          "width": "fill_container",
+                          "height": 52,
+                          "fill": "#000000",
+                          "stroke": "#2A2A2A",
+                          "strokeWidth": 1,
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "TPrKC",
+                              "name": "PRÉNOM Placeholder",
+                              "fill": "#2A2A2A",
+                              "content": "Jean",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "pemol",
+                      "name": "NOM Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "fO72A",
+                          "name": "NOM Label",
+                          "fill": "#888888",
+                          "content": "NOM",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "letterSpacing": 1
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CSGFo",
+                          "name": "NOM Input",
+                          "width": "fill_container",
+                          "height": 52,
+                          "fill": "#000000",
+                          "stroke": "#2A2A2A",
+                          "strokeWidth": 1,
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "xRxlW",
+                              "name": "NOM Placeholder",
+                              "fill": "#2A2A2A",
+                              "content": "Dupont",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "sn07d",
+                  "name": "Row Email Tel",
+                  "width": "fill_container",
+                  "gap": 20,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "bK0PJ",
+                      "name": "EMAIL Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "s9xevx",
+                          "name": "EMAIL Label",
+                          "fill": "#888888",
+                          "content": "EMAIL",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "letterSpacing": 1
+                        },
+                        {
+                          "type": "frame",
+                          "id": "OcoBe",
+                          "name": "EMAIL Input",
+                          "width": "fill_container",
+                          "height": 52,
+                          "fill": "#000000",
+                          "stroke": "#2A2A2A",
+                          "strokeWidth": 1,
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "P3NLpQ",
+                              "name": "EMAIL Placeholder",
+                              "fill": "#2A2A2A",
+                              "content": "jean@email.com",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bue1u",
+                      "name": "TÉLÉPHONE Field",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "C4xPeR",
+                          "name": "TÉLÉPHONE Label",
+                          "fill": "#888888",
+                          "content": "TÉLÉPHONE",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "letterSpacing": 1
+                        },
+                        {
+                          "type": "frame",
+                          "id": "EvAZM",
+                          "name": "TÉLÉPHONE Input",
+                          "width": "fill_container",
+                          "height": 52,
+                          "fill": "#000000",
+                          "stroke": "#2A2A2A",
+                          "strokeWidth": 1,
+                          "padding": [
+                            0,
+                            16
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ZSim1",
+                              "name": "TÉLÉPHONE Placeholder",
+                              "fill": "#2A2A2A",
+                              "content": "06 XX XX XX XX",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "300"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NDyQl",
+                  "name": "Type Location Wrap",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "C8qIht",
+                      "name": "Type Label",
+                      "fill": "#888888",
+                      "content": "TYPE DE LOCATION",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "RyONS",
+                      "name": "Type Location Row",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "W0wZXA",
+                          "name": "JOURNÉE Option",
+                          "fill": "#000000",
+                          "stroke": "#2A2A2A",
+                          "strokeWidth": 1,
+                          "gap": 10,
+                          "padding": [
+                            12,
+                            24
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "zWAc4",
+                              "name": "JOURNÉE Option Text",
+                              "fill": "#888888",
+                              "content": "JOURNÉE",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "500",
+                              "letterSpacing": 1
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "R88Yl",
+                          "name": "SEMAINE Option",
+                          "fill": "#FDE047",
+                          "stroke": "#FDE047",
+                          "strokeWidth": 1,
+                          "gap": 10,
+                          "padding": [
+                            12,
+                            24
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "e3x03",
+                              "name": "SEMAINE Option Text",
+                              "fill": "#000000",
+                              "content": "SEMAINE",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "500",
+                              "letterSpacing": 1
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "wu4wp",
+                          "name": "MOIS Option",
+                          "fill": "#000000",
+                          "stroke": "#2A2A2A",
+                          "strokeWidth": 1,
+                          "gap": 10,
+                          "padding": [
+                            12,
+                            24
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "gHOTm",
+                              "name": "MOIS Option Text",
+                              "fill": "#888888",
+                              "content": "MOIS",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "500",
+                              "letterSpacing": 1
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zOM6U",
+                  "name": "Message Wrap",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "JQyk1",
+                      "name": "Message Label",
+                      "fill": "#888888",
+                      "content": "MESSAGE",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fnk2s",
+                      "name": "Message Textarea",
+                      "width": "fill_container",
+                      "height": 140,
+                      "fill": "#000000",
+                      "stroke": "#2A2A2A",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "padding": 16,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "c68Zn",
+                          "name": "Message Placeholder",
+                          "fill": "#2A2A2A",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Parlez-nous de votre activité, vos disponibilités, vos questions…",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "300"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "F4w6g2",
+                  "name": "Submit Button",
+                  "width": "fill_container",
+                  "height": 60,
+                  "fill": "#FDE047",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Je0mc",
+                      "name": "Submit Text",
+                      "fill": "#000000",
+                      "content": "ENVOYER MA DEMANDE",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500",
+                      "letterSpacing": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "lqNGO",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "#000000",
+          "stroke": "#2A2A2A",
+          "strokeWidth": {
+            "top": 1
+          },
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            48,
+            120
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "IE6qP",
+              "name": "Footer Top",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "OCPZ2",
+                  "name": "Footer Logo Col",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "b972YA",
+                      "name": "Footer Logo Row",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lPDiX",
+                          "name": "Footer Logo Pheno",
+                          "fill": "#FDE047",
+                          "content": "PHENO",
+                          "fontFamily": "Bebas Neue",
+                          "fontSize": 22,
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        },
+                        {
+                          "type": "text",
+                          "id": "nfVvI",
+                          "name": "Footer Logo Barber",
+                          "fill": "#FFFFFF",
+                          "content": "BARBER",
+                          "fontFamily": "Bebas Neue",
+                          "fontSize": 22,
+                          "fontWeight": "normal",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "AEvQ7",
+                      "name": "Footer Tagline",
+                      "fill": "#888888",
+                      "content": "Barbershop premium · Montpellier",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "300"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "YGlqr",
+                  "name": "Footer Nav",
+                  "gap": 32,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "U9IDh",
+                      "name": "Footer Nav Accueil",
+                      "fill": "#888888",
+                      "content": "Accueil",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "Uyvid",
+                      "name": "Footer Nav Prestations",
+                      "fill": "#888888",
+                      "content": "Prestations",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "Ee14X",
+                      "name": "Footer Nav Location fauteuil",
+                      "fill": "#888888",
+                      "content": "Location fauteuil",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 0.5
+                    },
+                    {
+                      "type": "text",
+                      "id": "WIQX6",
+                      "name": "Footer Nav Contact",
+                      "fill": "#888888",
+                      "content": "Contact",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal",
+                      "letterSpacing": 0.5
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LYWvi",
+                  "name": "Footer Social",
+                  "gap": 20,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "CsZqb",
+                      "name": "Instagram Icon",
+                      "width": 36,
+                      "height": 36,
+                      "stroke": "#888888",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "vf0iq",
+                          "name": "IG Label",
+                          "fill": "#888888",
+                          "content": "IG",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Xc9Dq",
+                      "name": "TikTok Icon",
+                      "width": 36,
+                      "height": 36,
+                      "stroke": "#888888",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ownVy",
+                          "name": "TT Label",
+                          "fill": "#888888",
+                          "content": "TT",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "500",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "NVACN",
+              "name": "Footer Divider",
+              "fill": "#2A2A2A",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "cCrin",
+              "name": "Footer Bottom",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "teUzH",
+                  "name": "Footer Copyright",
+                  "fill": "#888888",
+                  "content": "© 2026 Pheno Barber — Montpellier",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "300"
+                },
+                {
+                  "type": "text",
+                  "id": "y86Q1A",
+                  "name": "Footer Legal",
+                  "fill": "#888888",
+                  "content": "Mentions légales",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

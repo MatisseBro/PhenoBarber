@@ -1506,7 +1506,7 @@
   }
   
   // ==================== ADMIN FUNCTIONS ====================
-  const ADMIN_CODE = '1141';
+  const ADMIN_CODE = 'EXEMPLE_INACTIF_NE_PAS_UTILISER';
   let reservations = JSON.parse(localStorage.getItem('phenoReservations') || '[]');
   
   function checkAdminCode() {
