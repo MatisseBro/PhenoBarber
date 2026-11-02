@@ -356,6 +356,7 @@ function RdvBookingCard({ booking: b, onStatusChange }: RdvCardProps) {
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
+  const [adminToday, setAdminToday] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [pwd, setPwd] = useState("");
   const [pwdError, setPwdError] = useState(false);
@@ -455,6 +456,13 @@ export default function AdminDashboard() {
   }
 
   useEffect(() => {
+    setAdminToday(new Intl.DateTimeFormat("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      timeZone: "Europe/Paris",
+    }).format(new Date()));
+
     fetch("/api/admin/check").then((r) => {
       if (r.ok) {
         setLoggedIn(true);
@@ -682,8 +690,6 @@ export default function AdminDashboard() {
     schedule: { eyebrow: "Organisation", title: "Créneaux & horaires", subtitle: "Définissez les ouvertures, fermetures et indisponibilités." },
   };
   const currentMeta = tabMeta[activeTab];
-  const adminToday = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long" }).format(new Date());
-
   return (
     <main className="admin-dashboard">
       {cancelTarget && (
