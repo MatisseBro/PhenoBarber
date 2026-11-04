@@ -6,7 +6,7 @@ const baseDirectory = path.dirname(fileURLToPath(import.meta.url))
 const compat = new FlatCompat({ baseDirectory })
 
 const config = [
-  { ignores: ['.next/**', 'node_modules/**', 'coverage/**', 'dist/**', 'tsconfig.tsbuildinfo', 'next-env.d.ts'] },
+  { ignores: ['.next/**', '.netlify/**', 'node_modules/**', 'coverage/**', 'dist/**', 'tsconfig.tsbuildinfo', 'next-env.d.ts'] },
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   { rules: { 'react/no-unescaped-entities': 'off' } },
   { files: ['server.js'], rules: { '@typescript-eslint/no-require-imports': 'off' } },

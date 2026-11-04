@@ -356,9 +356,10 @@ function RdvBookingCard({ booking: b, onStatusChange }: RdvCardProps) {
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
+  const [adminToday, setAdminToday] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [pwd, setPwd] = useState("");
-  const [pwdError, setPwdError] = useState(false);
+  const [pwdError, setPwdError] = useState<string | null>(null);
   const [showPwd, setShowPwd] = useState(false);
   const [activeTab, setActiveTab] = useState<AdminTab>("rdv");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -455,6 +456,13 @@ export default function AdminDashboard() {
   }
 
   useEffect(() => {
+    setAdminToday(new Intl.DateTimeFormat("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      timeZone: "Europe/Paris",
+    }).format(new Date()));
+
     fetch("/api/admin/check").then((r) => {
       if (r.ok) {
         setLoggedIn(true);
@@ -462,22 +470,35 @@ export default function AdminDashboard() {
         loadRdvBookings();
       }
       setLoading(false);
-    });
+    }).catch(() => setLoading(false));
   }, [loadReservations, loadRdvBookings]);
 
   async function login(e: React.FormEvent) {
     e.preventDefault();
-    const res = await fetch("/api/admin/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: pwd }),
-    });
-    if (res.ok) {
-      setLoggedIn(true);
-      loadReservations();
-      loadRdvBookings();
-    } else {
-      setPwdError(true);
+    setPwdError(null);
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: pwd }),
+      });
+      if (res.ok) {
+        setLoggedIn(true);
+        loadReservations();
+        loadRdvBookings();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 429) {
+          setPwdError(data.error ?? "Trop de tentatives. Réessayez plus tard.");
+        } else if (res.status === 503) {
+          setPwdError("Service indisponible. Vérifiez la configuration serveur.");
+        } else {
+          setPwdError("Mot de passe incorrect");
+        }
+        setPwd("");
+      }
+    } catch {
+      setPwdError("Erreur réseau. Vérifiez votre connexion.");
       setPwd("");
     }
   }
@@ -628,7 +649,7 @@ export default function AdminDashboard() {
                   value={pwd}
                   onChange={(e) => {
                     setPwd(e.target.value);
-                    setPwdError(false);
+                    setPwdError(null);
                   }}
                   autoFocus
                   style={{ paddingRight: "2.8rem" }}
@@ -655,7 +676,7 @@ export default function AdminDashboard() {
                 </button>
               </div>
               {pwdError && (
-                <p className="form-error">⚠ Mot de passe incorrect</p>
+                <p className="form-error">⚠ {pwdError}</p>
               )}
             </div>
             <button
@@ -682,10 +703,22 @@ export default function AdminDashboard() {
     schedule: { eyebrow: "Organisation", title: "Créneaux & horaires", subtitle: "Définissez les ouvertures, fermetures et indisponibilités." },
   };
   const currentMeta = tabMeta[activeTab];
-  const adminToday = new Intl.DateTimeFormat("fr-FR", { weekday: "long", day: "numeric", month: "long" }).format(new Date());
-
   return (
-    <main className="admin-dashboard">
+    <main
+      className="admin-dashboard"
+      style={{
+        '--ad-bg':      '#0c1525',
+        '--ad-sidebar': '#0a1220',
+        '--ad-surface': '#121f33',
+        '--ad-raised':  '#192940',
+        '--ad-line':    '#29384e',
+        '--ad-gold':    '#ddbc75',
+        '--ad-ink':     '#f3f5fa',
+        '--ad-muted':   '#a6b3c5',
+        '--ad-green':   '#a7d6c4',
+        '--ad-red':     '#ffb5ac',
+      } as React.CSSProperties}
+    >
       {cancelTarget && (
         <ConfirmDialog
           title={cancelTarget.kind === "rdv" ? "Annuler ce rendez-vous ?" : "Annuler cette demande ?"}
