@@ -65,9 +65,8 @@ function localRateLimit(key: string, limit: number, windowSeconds: number): bool
 export async function enforceRateLimit(request: Request, options: RateLimitOptions): Promise<boolean> {
   const key = opaqueKey(request, options.namespace)
   if (!key) {
-    return process.env.NODE_ENV === 'production'
-      ? false
-      : localRateLimit(`${options.namespace}:local`, options.limit, options.windowSeconds)
+    // Sans secret configuré, utiliser le rate-limit en mémoire comme filet de sécurité minimal.
+    return localRateLimit(`${options.namespace}:local`, options.limit, options.windowSeconds)
   }
 
   try {
@@ -78,8 +77,7 @@ export async function enforceRateLimit(request: Request, options: RateLimitOptio
     })
     if (!error) return data === true
   } catch {
-    // La production échoue fermée ; le développement conserve un fallback local.
+    // Supabase indisponible : fallback mémoire pour ne pas bloquer l'accès.
   }
-  if (process.env.NODE_ENV === 'production') return false
   return localRateLimit(key, options.limit, options.windowSeconds)
 }
