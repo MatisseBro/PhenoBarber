@@ -1087,3 +1087,6 @@ li { margin-bottom: 0.3rem; }
   margin-top: 0.2rem;
   line-height: 1.5;
 }
+
+/* Hide public nav on routes that use .admin-route wrapper */
+body:has(.admin-route) .site-nav-shell { display: none !important; }

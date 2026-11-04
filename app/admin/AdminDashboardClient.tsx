@@ -1,6 +1,5 @@
 'use client'
 
-import './admin-dashboard.css'
 import dynamic from 'next/dynamic'
 
 const AdminDashboard = dynamic(() => import('@/components/AdminDashboard'), {
