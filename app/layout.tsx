@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Plus_Jakarta_Sans, Bebas_Neue } from 'next/font/google'
+import { headers } from 'next/headers'
 import './globals.css'
 import '../components/site-nav.css'
 import '../components/site-footer.css'
@@ -106,9 +107,13 @@ const jsonLd = {
   ],
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const h = await headers()
+  const invokePath = h.get('x-invoke-path') ?? ''
+  const showNav = !invokePath.startsWith('/admin') && !invokePath.startsWith('/espace-client')
+
   return (
-    <html lang="fr" className={`${plusJakarta.variable} ${bebasNeue.variable}`}>
+    <html lang="fr" className={`${plusJakarta.variable} ${bebasNeue.variable}`} suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
@@ -116,7 +121,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body suppressHydrationWarning>
-        <SiteNav />
+        {showNav && <SiteNav />}
         {children}
       </body>
     </html>

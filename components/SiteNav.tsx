@@ -36,7 +36,7 @@ export default function SiteNav() {
     }
   }, [open])
 
-  if (pathname.startsWith('/admin')) return null
+  if (!pathname || pathname.startsWith('/admin') || pathname.startsWith('/espace-client')) return null
 
   return (
     <header className="site-nav-shell" ref={shellRef}>
