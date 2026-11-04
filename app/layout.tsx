@@ -1,23 +1,8 @@
 import type { Metadata } from 'next'
-import { Plus_Jakarta_Sans, Bebas_Neue } from 'next/font/google'
 import './globals.css'
 import '../components/site-nav.css'
 import '../components/site-footer.css'
 import SiteNav from '../components/SiteNav'
-
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
-  variable: '--font-plus-jakarta',
-  display: 'swap',
-})
-
-const bebasNeue = Bebas_Neue({
-  subsets: ['latin'],
-  weight: ['400'],
-  variable: '--font-bebas',
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://phenoandco.fr'),
@@ -108,7 +93,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${plusJakarta.variable} ${bebasNeue.variable}`} suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
