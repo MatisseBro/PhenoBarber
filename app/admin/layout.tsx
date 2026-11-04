@@ -4,5 +4,10 @@ import './admin-dashboard.css'
 export const metadata: Metadata = { robots: { index: false, follow: false } }
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return children
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: '.site-nav-shell{display:none!important}' }} />
+      {children}
+    </>
+  )
 }
