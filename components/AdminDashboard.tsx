@@ -238,7 +238,7 @@ function DashboardIcon({ name }: { name: "agenda" | "clients" | "location" | "sc
     home: <><path d="m3 11 9-8 9 8" /><path d="M5 10v10h14V10M9 20v-6h6v6" /></>,
     logout: <><path d="M10 17l5-5-5-5M15 12H3" /><path d="M15 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4" /></>,
   };
-  return <svg className="ad-icon" viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
+  return <svg className="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
 }
 
 function fmtDur(m: number) {
@@ -707,16 +707,16 @@ export default function AdminDashboard() {
     <main
       className="admin-dashboard"
       style={{
-        '--ad-bg':      '#0c1525',
-        '--ad-sidebar': '#0a1220',
-        '--ad-surface': '#121f33',
-        '--ad-raised':  '#192940',
-        '--ad-line':    '#29384e',
-        '--ad-gold':    '#ddbc75',
-        '--ad-ink':     '#f3f5fa',
-        '--ad-muted':   '#a6b3c5',
-        '--ad-green':   '#a7d6c4',
-        '--ad-red':     '#ffb5ac',
+        '--dashboard-bg':      '#0c1525',
+        '--dashboard-sidebar': '#0a1220',
+        '--dashboard-surface': '#121f33',
+        '--dashboard-raised':  '#192940',
+        '--dashboard-line':    '#29384e',
+        '--dashboard-gold':    '#ddbc75',
+        '--dashboard-ink':     '#f3f5fa',
+        '--dashboard-muted':   '#a6b3c5',
+        '--dashboard-green':   '#a7d6c4',
+        '--dashboard-red':     '#ffb5ac',
       } as React.CSSProperties}
     >
       {cancelTarget && (
@@ -736,14 +736,14 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <button className={`ad-scrim${sidebarOpen ? " is-open" : ""}`} aria-label="Fermer le menu" onClick={() => setSidebarOpen(false)} />
-      <aside className={`ad-sidebar${sidebarOpen ? " is-open" : ""}`}>
-        <Link href="/" className="ad-brand">
-          <span className="ad-brand-mark">P<span>&amp;</span></span>
+      <button className={`dashboard-scrim${sidebarOpen ? " is-open" : ""}`} aria-label="Fermer le menu" onClick={() => setSidebarOpen(false)} />
+      <aside className={`dashboard-sidebar${sidebarOpen ? " is-open" : ""}`}>
+        <Link href="/" className="dashboard-brand">
+          <span className="dashboard-brand-mark">P<span>&amp;</span></span>
           <span><strong>PHENO&amp;CO</strong><small>Espace administrateur</small></span>
         </Link>
-        <p className="ad-nav-title">Votre salon</p>
-        <nav className="ad-nav" aria-label="Navigation du tableau de bord">
+        <p className="dashboard-nav-title">Votre salon</p>
+        <nav className="dashboard-nav" aria-label="Navigation du tableau de bord">
           {([
             { key: "rdv", label: "Agenda", icon: "agenda", count: rdvStats.total },
             { key: "clients", label: "Clients", icon: "clients", count: clientTotal || undefined },
@@ -752,7 +752,7 @@ export default function AdminDashboard() {
           ] as { key: AdminTab; label: string; icon: "agenda" | "clients" | "location" | "schedule"; count?: number }[]).map(item => (
             <button
               key={item.key}
-              className={`ad-nav-item${activeTab === item.key ? " is-active" : ""}`}
+              className={`dashboard-nav-item${activeTab === item.key ? " is-active" : ""}`}
               onClick={() => { setActiveTab(item.key); setSidebarOpen(false); }}
               aria-current={activeTab === item.key ? "page" : undefined}
             >
@@ -762,42 +762,42 @@ export default function AdminDashboard() {
             </button>
           ))}
         </nav>
-        <div className="ad-side-bottom">
-          <Link href="/" className="ad-nav-item"><DashboardIcon name="home" /><span>Voir le site</span></Link>
-          <button className="ad-profile" onClick={logout}>
-            <span className="ad-avatar">P&amp;</span>
+        <div className="dashboard-side-bottom">
+          <Link href="/" className="dashboard-nav-item"><DashboardIcon name="home" /><span>Voir le site</span></Link>
+          <button className="dashboard-profile" onClick={logout}>
+            <span className="dashboard-avatar">P&amp;</span>
             <span><strong>PHENO&amp;CO</strong><small>Déconnexion</small></span>
             <DashboardIcon name="logout" />
           </button>
-          <p className="ad-version">Dashboard connecté · v2</p>
+          <p className="dashboard-version">Dashboard connecté · v2</p>
         </div>
       </aside>
 
-      <div className="ad-app">
-        <header className="ad-topbar">
-          <button className="ad-menu-button" onClick={() => setSidebarOpen(true)} aria-label="Ouvrir le menu"><DashboardIcon name="menu" /></button>
-          <label className="ad-search">
+      <div className="dashboard-app">
+        <header className="dashboard-topbar">
+          <button className="dashboard-menu-button" onClick={() => setSidebarOpen(true)} aria-label="Ouvrir le menu"><DashboardIcon name="menu" /></button>
+          <label className="dashboard-search">
             <DashboardIcon name="search" />
             <input aria-label="Rechercher dans les clients et réservations" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Rechercher un client, un téléphone…" />
           </label>
-          <div className="ad-top-actions">
-            <span className="ad-connection"><i /> Base connectée</span>
+          <div className="dashboard-top-actions">
+            <span className="dashboard-connection"><i /> Base connectée</span>
             {activeTab !== "schedule" && activeTab !== "clients" && (
-              <button className="ad-button ad-button-ghost" onClick={() => activeTab === "rdv" ? exportRdvCSV(filteredRdv) : exportCSV(filtered)}>
+              <button className="dashboard-button dashboard-button-ghost" onClick={() => activeTab === "rdv" ? exportRdvCSV(filteredRdv) : exportCSV(filtered)}>
                 <DashboardIcon name="download" /> Exporter CSV
               </button>
             )}
           </div>
         </header>
 
-        <div className="ad-content">
-          <div className="ad-page-head">
+        <div className="dashboard-content">
+          <div className="dashboard-page-head">
             <div>
-              <p className="ad-eyebrow">{currentMeta.eyebrow}</p>
+              <p className="dashboard-eyebrow">{currentMeta.eyebrow}</p>
               <h1>{currentMeta.title}</h1>
-              <p className="ad-subtitle">{currentMeta.subtitle}</p>
+              <p className="dashboard-subtitle">{currentMeta.subtitle}</p>
             </div>
-            <div className="ad-page-date"><span>Aujourd&apos;hui</span><strong>{adminToday}</strong></div>
+            <div className="dashboard-page-date"><span>Aujourd&apos;hui</span><strong>{adminToday}</strong></div>
           </div>
 
         {/* ── RDV COUPE TAB ── */}
@@ -882,28 +882,28 @@ export default function AdminDashboard() {
 
         {/* ── CLIENTS TAB ── */}
         {activeTab === "clients" && (
-          <section className="ad-panel">
-            <div className="ad-panel-head">
+          <section className="dashboard-panel">
+            <div className="dashboard-panel-head">
               <div>
                 <h2>Répertoire clients</h2>
                 <p>{clientTotal} client{clientTotal !== 1 ? "s" : ""} enregistré{clientTotal !== 1 ? "s" : ""}</p>
               </div>
-              <div className="ad-panel-actions">
-                <span className="ad-panel-tag">Page {clientPage + 1}</span>
+              <div className="dashboard-panel-actions">
+                <span className="dashboard-panel-tag">Page {clientPage + 1}</span>
                 <input
                   ref={csvInputRef}
-                  className="ad-file-input"
+                  className="dashboard-file-input"
                   type="file"
                   accept=".csv,text/csv"
                   onChange={event => { const file = event.target.files?.[0]; if (file) importClientsCsv(file); }}
                 />
-                <button className="ad-button ad-import-button" disabled={importingClients} onClick={() => csvInputRef.current?.click()}>
+                <button className="dashboard-button dashboard-import-button" disabled={importingClients} onClick={() => csvInputRef.current?.click()}>
                   <DashboardIcon name="download" /> {importingClients ? "Import…" : "Importer un CSV"}
                 </button>
               </div>
             </div>
-            <div className="ad-client-tools">
-              <div className="ad-filter-chips" role="group" aria-label="Filtrer les clients">
+            <div className="dashboard-client-tools">
+              <div className="dashboard-filter-chips" role="group" aria-label="Filtrer les clients">
                 {([
                   { key: "all", label: "Tous" },
                   { key: "rdv", label: "Avec RDV" },
@@ -913,7 +913,7 @@ export default function AdminDashboard() {
                   <button key={filter.key} className={clientActivity === filter.key ? "is-active" : ""} onClick={() => setClientActivity(filter.key)}>{filter.label}</button>
                 ))}
               </div>
-              <label className="ad-sort-label">Trier par
+              <label className="dashboard-sort-label">Trier par
                 <select value={clientSort} onChange={event => setClientSort(event.target.value as typeof clientSort)}>
                   <option value="recent">Dernière visite</option>
                   <option value="name">Nom A–Z</option>
@@ -921,11 +921,11 @@ export default function AdminDashboard() {
                 </select>
               </label>
             </div>
-            <div className="ad-import-help">
+            <div className="dashboard-import-help">
               <strong>Format accepté :</strong> Nom complet (ou Prénom + Nom), Téléphone, Email. Colonnes facultatives : RDV, Locations, Dernier RDV. Maximum 1 000 lignes.
             </div>
             {clientImportResult && (
-              <div className="ad-import-result">
+              <div className="dashboard-import-result">
                 <strong>Import terminé</strong>
                 <span>{clientImportResult.imported} ajouté{clientImportResult.imported !== 1 ? "s" : ""}</span>
                 <span>{clientImportResult.updated} mis à jour</span>
@@ -934,7 +934,7 @@ export default function AdminDashboard() {
               </div>
             )}
             {clientImportError && (
-              <div className="ad-import-error" role="alert">
+              <div className="dashboard-import-error" role="alert">
                 <strong>Import impossible</strong>
                 <p>{clientImportError.message}</p>
                 {clientImportError.details?.length ? (
@@ -944,17 +944,17 @@ export default function AdminDashboard() {
               </div>
             )}
             {clientsLoading ? (
-              <div className="ad-table-empty"><span className="spinner" /> Chargement des clients…</div>
+              <div className="dashboard-table-empty"><span className="spinner" /> Chargement des clients…</div>
             ) : clients.length === 0 ? (
-              <div className="ad-table-empty">Aucun client trouvé.</div>
+              <div className="dashboard-table-empty">Aucun client trouvé.</div>
             ) : (
-              <div className="ad-table-scroll">
-                <table className="ad-client-table">
+              <div className="dashboard-table-scroll">
+                <table className="dashboard-client-table">
                   <thead><tr><th>Client</th><th>Contact</th><th>Rendez-vous</th><th>Locations</th><th>Dernière visite</th></tr></thead>
                   <tbody>
                     {clients.map(client => (
                       <tr key={client.id}>
-                        <td><div className="ad-client-name"><span>{client.nom?.slice(0, 2).toUpperCase() || "CL"}</span><strong>{client.nom || "Client"}</strong></div></td>
+                        <td><div className="dashboard-client-name"><span>{client.nom?.slice(0, 2).toUpperCase() || "CL"}</span><strong>{client.nom || "Client"}</strong></div></td>
                         <td>
                           {client.telephone ? <a href={`tel:${client.telephone}`}>{client.telephone}</a> : <span>-</span>}
                           <small>{client.email ? <a href={`mailto:${client.email}`}>{client.email}</a> : <span>-</span>}</small>
@@ -969,10 +969,10 @@ export default function AdminDashboard() {
               </div>
             )}
             {clientTotal > 30 && (
-              <div className="pagination ad-client-pagination">
-                <button className="ad-button ad-button-ghost" disabled={clientPage === 0} onClick={() => setClientPage(page => page - 1)}>← Précédent</button>
+              <div className="pagination dashboard-client-pagination">
+                <button className="dashboard-button dashboard-button-ghost" disabled={clientPage === 0} onClick={() => setClientPage(page => page - 1)}>← Précédent</button>
                 <span className="page-info">{clientPage + 1} / {Math.ceil(clientTotal / 30)}</span>
-                <button className="ad-button ad-button-ghost" disabled={(clientPage + 1) * 30 >= clientTotal} onClick={() => setClientPage(page => page + 1)}>Suivant →</button>
+                <button className="dashboard-button dashboard-button-ghost" disabled={(clientPage + 1) * 30 >= clientTotal} onClick={() => setClientPage(page => page + 1)}>Suivant →</button>
               </div>
             )}
           </section>

@@ -237,7 +237,7 @@ export default function ScheduleManager() {
         <div className="res-head" style={{ marginBottom: '1rem' }}>
           <div className="res-name">Jours d&apos;ouverture</div>
         </div>
-        <div className="ad-schedule-period">
+        <div className="dashboard-schedule-period">
           <strong>Planning hebdomadaire permanent</strong>
           <span>Les jours et horaires cochés définissent les nouveaux créneaux proposés à la réservation pour toutes les dates futures, jusqu’à leur prochaine modification. Les rendez-vous déjà enregistrés restent inchangés dans l’agenda. Utilisez les fermetures et blocages ci-dessous pour une date précise.</span>
         </div>

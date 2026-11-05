@@ -50,17 +50,17 @@ export default function ConfirmDialog({
   }
 
   return (
-    <div className="ad-dialog-backdrop" onMouseDown={event => {
+    <div className="dashboard-dialog-backdrop" onMouseDown={event => {
       if (event.target === event.currentTarget && !working) onCancel();
     }}>
-      <section className="ad-dialog" role="dialog" aria-modal="true" aria-labelledby="ad-dialog-title" aria-describedby="ad-dialog-description">
-        <span className={`ad-dialog-mark${destructive ? " is-danger" : ""}`} aria-hidden="true">{destructive ? "!" : "✓"}</span>
-        <h2 id="ad-dialog-title">{title}</h2>
-        <p id="ad-dialog-description">{description}</p>
-        {error && <p className="ad-dialog-error" role="alert">Une erreur est survenue. Vérifie ta connexion et réessaie.</p>}
-        <div className="ad-dialog-actions">
-          <button ref={cancelRef} type="button" className="ad-button ad-button-ghost" onClick={onCancel} disabled={working}>Retour</button>
-          <button type="button" className={`ad-button${destructive ? " ad-dialog-confirm-danger" : " ad-dialog-confirm"}`} onClick={confirm} disabled={working}>
+      <section className="dashboard-dialog" role="dialog" aria-modal="true" aria-labelledby="dashboard-dialog-title" aria-describedby="dashboard-dialog-description">
+        <span className={`dashboard-dialog-mark${destructive ? " is-danger" : ""}`} aria-hidden="true">{destructive ? "!" : "✓"}</span>
+        <h2 id="dashboard-dialog-title">{title}</h2>
+        <p id="dashboard-dialog-description">{description}</p>
+        {error && <p className="dashboard-dialog-error" role="alert">Une erreur est survenue. Vérifie ta connexion et réessaie.</p>}
+        <div className="dashboard-dialog-actions">
+          <button ref={cancelRef} type="button" className="dashboard-button dashboard-button-ghost" onClick={onCancel} disabled={working}>Retour</button>
+          <button type="button" className={`dashboard-button${destructive ? " dashboard-dialog-confirm-danger" : " dashboard-dialog-confirm"}`} onClick={confirm} disabled={working}>
             {working ? "En cours…" : confirmLabel}
           </button>
         </div>
